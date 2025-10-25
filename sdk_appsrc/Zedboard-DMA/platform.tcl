@@ -16,3 +16,16 @@ platform write
 platform generate -domains 
 platform active {Zedboard-DMA}
 platform generate
+platform generate
+platform active {Zedboard-DMA}
+bsp reload
+bsp setlib -name xilffs -ver 4.7
+bsp write
+bsp reload
+catch {bsp regenerate}
+domain active {zynq_fsbl}
+bsp reload
+bsp reload
+domain active {standalone_domain}
+bsp write
+platform generate -domains standalone_domain 
