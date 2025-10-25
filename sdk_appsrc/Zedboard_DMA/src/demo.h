@@ -92,27 +92,33 @@
 
 /**************************** Type Definitions *******************************/
 typedef struct {
-	u8 u8Verbose;
-	u8 fUserIOEvent;
-	u8 fVideoEvent;
-	u8 fAudioRecord;
-	u8 fAudioPlayback;
-	u8 fDmaError;
-	u8 fDmaS2MMEvent;
-	u8 fDmaMM2SEvent;
-	int fDVIClockLock;
-	char chBtn;
-	u8 fLinkEvent;
-	u8 fLinkStatus;
-	int linkSpeed;
-	int mac;
-	XStatus fMacStatus;
+	 u8 u8Verbose;
+	 u8 fUserIOEvent;
+	 u8 fVideoEvent;
+	 u8 fAudioRecord;
+	 u8 fAudioPlayback;
+	 u8 fDmaError;
+	 u8 fDmaS2MMEvent;
+	 u8 fDmaMM2SEvent;
+	 int fDVIClockLock;
+	 char chBtn;
+	 u8 fLinkEvent;
+	 u8 fLinkStatus;
+	 int linkSpeed;
+	 int mac;
+	 XStatus fMacStatus;
+	 u8 fKwsEngineReady;
+	 u8 fKwsResultValid;
+	 u32 u32KwsClass;
+	 float fKwsConfidence;
 } sDemo_t;
 
 /************************** Function Prototypes ******************************/
 
 
+
 // This variable holds the demo related settings
 extern volatile sDemo_t Demo;
+
 
 #endif /* MAIN_H_ */
