@@ -109,8 +109,6 @@ static XGpio sUserIO;
 
 volatile sDemo_t Demo = {0};
 
-volatile sDemo_t Demo = {0};
-
 #ifdef XPAR_INTC_0_DEVICE_ID
  static XIntc sIntc;
 #else
