@@ -116,7 +116,9 @@ typedef struct {
 /************************** Function Prototypes ******************************/
 
 
+
 // This variable holds the demo related settings
 extern volatile sDemo_t Demo;
+
 
 #endif /* MAIN_H_ */

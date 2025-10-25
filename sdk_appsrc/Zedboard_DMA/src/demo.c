@@ -34,12 +34,14 @@
 #include "./dma/dma.h"
 #include "./intc/intc.h"
 #include "./userio/userio.h"
+
 #include "./iic/iic.h"
 #include "./kws/kws_engine.h"
 
 /***************************** Include Files *********************************/
 
 #include "xaxidma.h"
+
 #include "xparameters.h"
 #include "xil_exception.h"
 #include "xdebug.h"
@@ -104,6 +106,8 @@ static XIic sIic;
 static XAxiDma sAxiDma;		/* Instance of the XAxiDma */
 
 static XGpio sUserIO;
+
+volatile sDemo_t Demo = {0};
 
 volatile sDemo_t Demo = {0};
 

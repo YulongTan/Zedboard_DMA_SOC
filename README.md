@@ -6,6 +6,31 @@ Description
 
 This project demonstrates how to use the Zedboard's Audio Codec and RAM to record samples of audio and play them back. Vivado is used to build the demo's hardware platform, and Xilinx SDK is used to program the bitstream onto the board and to build and deploy a C application.
 
+Community Greeting
+------------------
+
+你好！欢迎查阅本项目的资源。此文档主要以英文编写，建议按照下文的步骤逐步体验演示流程，如需更多帮助可访问结尾提供的支持链接。
+
+Troubleshooting when migrating to Vitis 2022
+--------------------------------------------
+
+When the software workspace is opened in Vitis 2022 without regenerating the
+board support package (BSP), the application build can fail with the error
+`fatal error: xil_io.h: No such file or directory`. The application sources do
+include `xil_io.h` directly, so the failure is not caused by unused code or
+conditional compilation.【F:sdk_appsrc/demo.h†L31-L43】 The header is still present
+in the repository under the legacy SDK 2018 layout at
+`ps7_cortexa9_0/standalone_domain/bsp/ps7_cortexa9_0/include/xil_io.h`.【F:sdk_appsrc/Zedboard-DMA/ps7_cortexa9_0/standalone_domain/bsp/ps7_cortexa9_0/include/xil_io.h†L1-L41】
+
+However, Vitis 2022 expects a generated aggregation directory named
+`bspinclude` inside the BSP. The pre-generated SDK 2018 tree stored with this
+repository only contains the older `bsp` directory, so the include path that
+Vitis 2022 adds (`standalone_domain/bspinclude/include`) does not actually
+exist.【3b3174†L1-L2】 As a result the compiler cannot locate `xil_io.h` until the
+platform is re-exported (or the include search path is updated manually) using
+Vivado/Vitis 2022 so that the new `bspinclude` folder is created alongside the
+updated BSP binaries.
+
 To use this demo, the Zedboard must be connected to a computer over MicroUSB, which must be running a serial terminal. For more information on how to set up and use a serial terminal, such as Tera Term or PuTTY, refer to [this tutorial](https://reference.digilentinc.com/learn/programmable-logic/tutorials/tera-term).
 
 The audio demo records a 5 second sample from microphone(J12) or line in (J13) and plays it back on headphone out(J10) or line out (J12). Recording and playback are controlled by push buttons  from a usb uart serial menu as shown below.
