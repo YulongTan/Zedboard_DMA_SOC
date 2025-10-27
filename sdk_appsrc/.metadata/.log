@@ -7730,3 +7730,162 @@ org.eclipse.core.runtime.CoreException: Corrupted database: Zedboard_DMA_system.
 
 !ENTRY com.xilinx.sdk.utils 0 0 2025-10-25 21:22:16.181
 !MESSAGE XSCT command with result: [::hsi::utils::closesw D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/sw/Zedboard-DMA/standalone_domain/system.mss], Result: [null, ]. Thread: Worker-11: Build Project
+!SESSION 2025-10-26 20:58:32.449 -----------------------------------------------
+eclipse.buildId=2021.2
+java.version=11.0.11
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_CN
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY org.eclipse.ui 4 4 2025-10-26 20:58:54.894
+!MESSAGE Plug-in 'org.eclipse.ui.editors' contributed an invalid Menu Extension (Path: 'navigate' is invalid): org.eclipse.ui.edit.text.gotoLastEditPosition
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.409
+!MESSAGE Failed to open C/C++ index file D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\.metadata\.plugins\org.eclipse.cdt.core\Zedboard-DMA.1760619544526.pdom - rebuilding the index
+!STACK 1
+org.eclipse.core.runtime.CoreException: Corrupted database: Zedboard-DMA.1760619544526.pdom
+	at org.eclipse.cdt.internal.core.pdom.db.Database.databaseCorruptionDetected(Database.java:318)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getChunk(Database.java:298)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getRecPtr(Database.java:513)
+	at org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage.getLinkageID(PDOMLinkage.java:123)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.readLinkages(PDOM.java:458)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.loadDatabase(PDOM.java:439)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.<init>(PDOM.java:414)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:64)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:59)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.getOrCreatePDOM(PDOMManager.java:390)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.createIndexer(PDOMManager.java:590)
+	at org.eclipse.cdt.internal.core.pdom.PDOMSetupJob.run(PDOMSetupJob.java:58)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.410
+!MESSAGE Corrupted database: Zedboard-DMA.1760619544526.pdom
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.413
+!MESSAGE Error
+!STACK 1
+org.eclipse.core.runtime.CoreException: Corrupted database: Zedboard-DMA.1760619544526.pdom
+	at org.eclipse.cdt.internal.core.pdom.db.Database.databaseCorruptionDetected(Database.java:318)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getChunk(Database.java:298)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getRecPtr(Database.java:513)
+	at org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage.getLinkageID(PDOMLinkage.java:123)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.readLinkages(PDOM.java:458)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.loadDatabase(PDOM.java:439)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.<init>(PDOM.java:414)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:64)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:59)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.getOrCreatePDOM(PDOMManager.java:398)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.createIndexer(PDOMManager.java:590)
+	at org.eclipse.cdt.internal.core.pdom.PDOMSetupJob.run(PDOMSetupJob.java:58)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.414
+!MESSAGE Corrupted database: Zedboard-DMA.1760619544526.pdom
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.425
+!MESSAGE Failed to open C/C++ index file D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\.metadata\.plugins\org.eclipse.cdt.core\Zedboard_DMA.1760619753699.pdom - rebuilding the index
+!STACK 1
+org.eclipse.core.runtime.CoreException: Corrupted database: Zedboard_DMA.1760619753699.pdom
+	at org.eclipse.cdt.internal.core.pdom.db.Database.databaseCorruptionDetected(Database.java:318)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getChunk(Database.java:298)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getRecPtr(Database.java:513)
+	at org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage.getLinkageID(PDOMLinkage.java:123)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.readLinkages(PDOM.java:458)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.loadDatabase(PDOM.java:439)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.<init>(PDOM.java:414)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:64)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:59)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.getOrCreatePDOM(PDOMManager.java:390)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.createIndexer(PDOMManager.java:590)
+	at org.eclipse.cdt.internal.core.pdom.PDOMSetupJob.run(PDOMSetupJob.java:58)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.426
+!MESSAGE Corrupted database: Zedboard_DMA.1760619753699.pdom
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.427
+!MESSAGE Error
+!STACK 1
+org.eclipse.core.runtime.CoreException: Corrupted database: Zedboard_DMA.1760619753699.pdom
+	at org.eclipse.cdt.internal.core.pdom.db.Database.databaseCorruptionDetected(Database.java:318)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getChunk(Database.java:298)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getRecPtr(Database.java:513)
+	at org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage.getLinkageID(PDOMLinkage.java:123)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.readLinkages(PDOM.java:458)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.loadDatabase(PDOM.java:439)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.<init>(PDOM.java:414)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:64)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:59)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.getOrCreatePDOM(PDOMManager.java:398)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.createIndexer(PDOMManager.java:590)
+	at org.eclipse.cdt.internal.core.pdom.PDOMSetupJob.run(PDOMSetupJob.java:58)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.428
+!MESSAGE Corrupted database: Zedboard_DMA.1760619753699.pdom
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.434
+!MESSAGE Failed to open C/C++ index file D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\.metadata\.plugins\org.eclipse.cdt.core\Zedboard_DMA_system.1760619753704.pdom - rebuilding the index
+!STACK 1
+org.eclipse.core.runtime.CoreException: Corrupted database: Zedboard_DMA_system.1760619753704.pdom
+	at org.eclipse.cdt.internal.core.pdom.db.Database.databaseCorruptionDetected(Database.java:318)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getChunk(Database.java:298)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getRecPtr(Database.java:513)
+	at org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage.getLinkageID(PDOMLinkage.java:123)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.readLinkages(PDOM.java:458)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.loadDatabase(PDOM.java:439)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.<init>(PDOM.java:414)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:64)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:59)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.getOrCreatePDOM(PDOMManager.java:390)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.createIndexer(PDOMManager.java:590)
+	at org.eclipse.cdt.internal.core.pdom.PDOMSetupJob.run(PDOMSetupJob.java:58)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.435
+!MESSAGE Corrupted database: Zedboard_DMA_system.1760619753704.pdom
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.436
+!MESSAGE Error
+!STACK 1
+org.eclipse.core.runtime.CoreException: Corrupted database: Zedboard_DMA_system.1760619753704.pdom
+	at org.eclipse.cdt.internal.core.pdom.db.Database.databaseCorruptionDetected(Database.java:318)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getChunk(Database.java:298)
+	at org.eclipse.cdt.internal.core.pdom.db.Database.getRecPtr(Database.java:513)
+	at org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage.getLinkageID(PDOMLinkage.java:123)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.readLinkages(PDOM.java:458)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.loadDatabase(PDOM.java:439)
+	at org.eclipse.cdt.internal.core.pdom.PDOM.<init>(PDOM.java:414)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:64)
+	at org.eclipse.cdt.internal.core.pdom.WritablePDOM.<init>(WritablePDOM.java:59)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.getOrCreatePDOM(PDOMManager.java:398)
+	at org.eclipse.cdt.internal.core.pdom.PDOMManager.createIndexer(PDOMManager.java:590)
+	at org.eclipse.cdt.internal.core.pdom.PDOMSetupJob.run(PDOMSetupJob.java:58)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.cdt.core 4 0 2025-10-26 20:58:55.436
+!MESSAGE Corrupted database: Zedboard_DMA_system.1760619753704.pdom
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:03.497
+!MESSAGE XSCT Command: [set sdk::sdk_chan tcfchan#0], Thread: Thread-20
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:03.498
+!MESSAGE XSCT Command: [plnx-install-path  ; ::scw::scw_mode gui], Thread: Thread-10
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:03.512
+!MESSAGE XSCT command with result: [set sdk::sdk_chan tcfchan#0], Result: [null, tcfchan#0]. Thread: Thread-20
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:03.514
+!MESSAGE XSCT command with result: [plnx-install-path  ; ::scw::scw_mode gui], Result: [null, ]. Thread: Thread-10
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:03.522
+!MESSAGE XSCT Command: [setws D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc], Thread: Thread-20
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:03.527
+!MESSAGE XSCT command with result: [setws D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc], Result: [null, ]. Thread: Thread-20
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:04.885
+!MESSAGE XSCT Command: [::hsi::utils::init_repo], Thread: Worker-0: Initializing s/w repositories
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:05.681
+!MESSAGE XSCT command with result: [::hsi::utils::init_repo], Result: [null, ]. Thread: Worker-0: Initializing s/w repositories
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:05.682
+!MESSAGE XSCT Command: [set query_var1 $::env(RDI_DATADIR)], Thread: Worker-0: Initializing s/w repositories
+
+!ENTRY com.xilinx.sdk.utils 0 0 2025-10-26 20:59:05.683
+!MESSAGE XSCT command with result: [set query_var1 $::env(RDI_DATADIR)], Result: [null, D:/Vitis/Vitis/2022.1/data]. Thread: Worker-0: Initializing s/w repositories

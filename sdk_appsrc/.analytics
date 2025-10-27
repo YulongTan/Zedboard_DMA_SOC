@@ -21,3 +21,6 @@ timestamp=[2025-10-25 21:20:21], mode=BUILD, duration=0:00:00.877, duration_ms=8
 timestamp=[2025-10-25 21:20:29], mode=BUILD, duration=0:00:08.054, duration_ms=8054, data={name=Zedboard_DMA_system, configuration=Debug, clean_build=false}
 timestamp=[2025-10-25 21:21:24], mode=BUILD, duration=0:00:00.838, duration_ms=838, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
 timestamp=[2025-10-25 21:22:17], mode=BUILD, duration=0:00:00.846, duration_ms=846, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
+timestamp=[2025-10-26 20:59:03], mode=WORKBENCH_START, duration=0:00:16.312, duration_ms=16312, data={}
+timestamp=[2025-10-26 20:59:05], mode=WORKBENCH_UI_INIT, duration=0:00:01.485, duration_ms=1485, data={editors_count=6, platform_editors_count=1, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=RemoteSystemsTempFiles,Zedboard-DMA,Zedboard_DMA,Zedboard_DMA_system}
+timestamp=[2025-10-26 20:59:05], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.386, duration_ms=386, data={}
