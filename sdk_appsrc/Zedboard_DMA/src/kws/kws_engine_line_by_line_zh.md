@@ -2,73 +2,61 @@
 
 > 行号基于当前仓库版本，便于与源码交叉参考。
 
-## 头文件与宏常量（L1-L53）
-- L1 引入自身头文件 `kws_engine.h`，导出 API 与常量定义。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L1】
-- L3-L11 包含 Vitis 控制台 `xil_printf`、FatFs `ff.h` 以及 `math.h`、`float.h` 等标准库，用于文件系统访问和数学运算。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L3-L11】
-- L13-L37 设定魔数、采样率、FFT、Mel 频带等常量，直接对应 Python 训练脚本中的参数：窗长 400、步长 160、Mel 滤波器数量 40、帧数 98 等，保证推理端与训练端一致。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L13-L37】
-- L39-L47 根据输入尺寸推导三次池化后的空间尺寸以及全局平均池化的目标大小（5×5），为后续 scratch 缓冲区的空间分配提供尺寸参考。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L39-L47】
+## 头文件与宏常量（L1-L52）
+- L1 引入自身头文件 `kws_engine.h`，导出公共 API 与结构体声明。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L1】
+- L3-L22 使用 `xil_printf.h`、`ff.h`、`math.h`、`float.h` 等标准头，为 FatFs、串口日志与 FFT/Mel 变换所需的三角/指数函数提供依赖。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L3-L22】
+- L24-L52 设定 DMA 录音与 KWS 模型共享的常量（采样率、FFT/Mel 尺寸、池化输出大小等），保持与 Python 训练脚本一致。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L24-L52】
 
-## 权重 / Scratch 结构体（L49-L110）
-- L49-L55 `KwsWeightHeader` 描述 SD 卡权重文件的头部，含魔数、版本与类别数。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L49-L55】
-- L57-L79 `KwsModel` 保存全部权重指针（卷积核、BN 参数、全连接层权重与偏置），初始化时逐段分配内存并填充。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L57-L79】
-- L81-L103 `KwsScratch` 是推理阶段的工作空间，包括输入张量、单声道缓冲、FFT 功率谱、各层输出等，避免重复分配。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L81-L103】
-- L105-L109 `KwsFeatureTables` 缓存 Hann 窗、余弦/正弦表以及 Mel 滤波器矩阵，只在第一次初始化时计算一次。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L105-L109】
+## 权重 / Scratch 结构体（L47-L115）
+- L47-L52 `KwsWeightHeader` 描述 SD 卡权重文件的魔数、版本与类别数。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L47-L52】
+- L54-L75 `KwsModel` 保存卷积/BN/全连接层的权重、偏置指针，初始化时逐段分配内存并填充数据。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L54-L75】
+- L77-L92 `KwsScratch` 记录推理所需的输入张量、FFT、各层输出缓冲，避免重复 `malloc`。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L77-L92】
+- L100-L106 `KwsFeatureTables` 缓存 Hann、sin/cos、Mel 滤波器矩阵，只在首次初始化时计算一次。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L100-L106】
+- **权重生成提示**：`tools/export_kws_weights.py` 会先把 PyTorch checkpoint 展平成 `kws_weights.txt`，可读性强，随后你可通过 `tools/txt_to_bin.py` 重新打包成符合小端布局的 `kws_weights.bin`，完全契合这里定义的结构体字段顺序。【F:sdk_appsrc/Zedboard_DMA/tools/export_kws_weights.py†L1-L165】【F:sdk_appsrc/Zedboard_DMA/tools/txt_to_bin.py†L1-L98】
 
-## 全局状态与前向声明（L111-L147）
-- L111-L117 定义 FatFs 全局对象、模型/缓存句柄和状态标志，`gEngineReady` 标识权重和 scratch 是否就绪，`gHasResult` 说明是否已有最新推理结果。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L111-L117】
-- L119-L147 列出所有内部静态函数，包括权重加载、特征提取、卷积/池化/Dense 前向等，便于在文件后方逐一实现。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L119-L147】
+## 全局状态与前向声明（L108-L157）
+- L108-L115 维护 FatFs 对象、模型/工作区句柄以及 `gEngineReady`、`gHasResult` 状态位。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L108-L115】
+- L116-L157 声明内部静态函数：从 SD 卡加载权重、分配/释放缓存、提取特征、执行卷积/池化/Dense 层等，为后续实现做准备。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L116-L157】
 
-## 初始化 / 关闭接口（L149-L193）
-- `KwsEngine_Initialize`（L149-L189）按顺序挂载 SD 卡、读取权重、分配 scratch、初始化特征表；失败时依次释放已分配资源并返回 `XST_FAILURE`。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L149-L189】
-- 成功后设置 `gEngineReady=1`、`gHasResult=0` 并打印类别数量，供外部确认。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L181-L189】
-- `KwsEngine_Shutdown`（L191-L197）清除状态并释放所有权重/缓存，适合在程序退出或需要重新加载新模型时调用。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L191-L197】
-- `KwsEngine_IsReady`（L199-L203）简单返回 `gEngineReady`，供主循环判断是否可以进入推理阶段。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L199-L203】
+## 初始化 / 关闭接口（L159-L203）
+- `KwsEngine_Initialize`（L159-L190）依次挂载 SD、读取权重、分配 scratch、初始化特征表；任一步失败都会清理已分配资源并返回 `XST_FAILURE`。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L159-L190】
+- `KwsEngine_Shutdown`（L192-L198）释放模型与缓存，同时复位状态位，便于热更新模型文件。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L192-L198】
+- `KwsEngine_IsReady`（L200-L203）返回引擎就绪标志供主循环查询。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L200-L203】
 
-## 处理录音与取回结果（L205-L246）
-- `KwsEngine_ProcessRecording`（L205-L246）是对外的主推理函数：
-  - L209-L224 进行参数合法性检查（引擎是否 ready、缓冲指针是否为空、帧数是否满足 decimation 后的 1 秒长度）。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L205-L224】
-  - L226-L229 调用 `extract_logmel` 把立体声采样转换为 40×98 的对数 Mel 频谱；若失败打印提示。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L226-L229】
-  - L231 调用 `run_network` 执行卷积/全连接推理，输出 logits 向量。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L231】
-  - L233-L241 遍历 logits 找到最大值与类别索引。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L233-L241】
-  - L243-L245 用 `expf(logit - max_logit)` 计算 Softmax 分母，并把 `1/sum` 作为“置信度”输出；同时置位 `gHasResult` 并回写给调用者。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L243-L245】
-- `KwsEngine_GetLogits`（L248-L256）在最新结果可用时返回 logits 指针，并可选写出类别数量，用于调试或上层进一步处理。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L248-L256】
+## 处理录音与取回结果（L205-L266）
+- `KwsEngine_ProcessRecording`（L205-L255）是对外主入口：
+  - L210-L223 校验引擎是否 ready、录音缓冲是否齐全以及帧数是否满足 decimation 后的一秒长度。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L210-L223】
+  - L224-L227 调用 `extract_logmel` 把立体声采样转成 40×98 对数 Mel 频谱；失败时返回错误码。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L224-L227】
+  - L229-L237 执行 `run_network` 获取 logits 并找出最大值与类别索引。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L229-L237】
+  - L240-L244 以 `expf` 计算 Softmax 分母，输出 1/∑exp 作为置信度并更新 `gHasResult`。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L240-L244】
+- `KwsEngine_GetLogits`（L257-L266）在结果有效时返回 logits 指针和类别数量，供调试或上层二次处理。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L257-L266】
 
-## 资源管理与文件系统（L258-L353）
-- `free_model`（L258-L275）和 `free_scratch`（L277-L295）逐项释放权重和工作区内存，并把全局结构清零，防止悬挂指针。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L258-L295】
-- `mount_sd_if_needed`（L297-L311）利用 FatFs 的 `f_mount` 一次性挂载 SD 卡，重复调用会直接返回成功，失败时打印错误码。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L297-L311】
-- `read_exact`（L313-L323）封装 `f_read`，确保读满指定字节数，否则返回内部错误，方便权重加载函数使用。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L313-L323】
-- `load_weights`（L325-L399）完成权重文件解析：
-  - L327-L347 打开文件并校验头部魔数/版本/类别数，若异常立即返回。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L325-L347】
-  - L349-L375 依据网络结构计算每层参数数量，逐段 `malloc`/`calloc` 对应数组，并检查分配是否成功。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L349-L375】
-  - L377-L397 用 `read_exact` 依次读入卷积、BN、全连接权重与偏置；任一读操作失败都会在关闭文件后返回错误。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L377-L399】
+## 资源管理与文件系统（L268-L561）
+- `free_model`（L268-L286）与 `free_scratch`（L288-L304）逐项释放权重和工作缓冲，防止悬挂指针。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L268-L304】
+- `mount_sd_if_needed`（L306-L320）封装 FatFs 挂载逻辑，只在未挂载时调用 `f_mount`。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L306-L320】
+- `read_exact`（L322-L333）确保从 SD 卡读满指定字节数，简化权重加载流程中的错误处理。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L322-L333】
+- `load_weights`（L335-L460）解析权重文件：校验头部、分配每层参数数组并逐段读取；任一读/分配失败都会清理并返回错误。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L335-L460】
+- `allocate_scratch`（L463-L500）根据网络尺寸分配输入张量、FFT、卷积/池化、中间展平、全连接输出等缓冲。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L463-L500】
+- `init_feature_tables`（L502-L562）首次调用时使用 `cosf`/`sinf` 计算 Hann 窗与 sin/cos 表，再通过 `log10f`、`powf` 生成 Mel 滤波矩阵，并记录初始化标志。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L502-L562】
 
-## Scratch 分配与特征表（L401-L466）
-- `allocate_scratch`（L401-L434）根据各层输出尺寸分配工作缓冲，包括单声道数据、FFT 功率谱、三次卷积/池化结果、全连接输入/输出等；任一指针为空即视为失败。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L401-L434】
-- `init_feature_tables`（L436-L466）只执行一次：
-  - L440-L443 构造 Hann 窗系数。
-  - L445-L449 预先计算每个 FFT bin 与窗样本的余弦/正弦值，供后续手写 FFT 使用。
-  - L451-L465 依据 Mel 公式建立滤波器组，先换算 Mel 标尺，再生成三角滤波权重矩阵。
-  - 最后把 `initialized` 标志设为 1，避免重复计算。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L436-L466】
+## 特征提取（L564-L615）
+- `extract_logmel` 把 DMA 缓冲转换成网络输入：
+  - L573-L584 按 `KWS_DECIMATION_FACTOR` 抽取并归一化为 16 kHz 单声道波形。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L573-L584】
+  - L586-L599 逐帧乘 Hann 窗并使用预计算的 sin/cos 累加得到功率谱。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L586-L599】
+  - L602-L612 与 Mel 滤波矩阵点乘，并以 `logf` 写入对数能量（内部会对极小值加上保护），生成 40×98 输入张量。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L602-L612】
 
-## 特征提取（L468-L526）
-- `extract_logmel` 分三步：
-  - L472-L482 通过 `KWS_DECIMATION_FACTOR` 做平均抽取，把 96 kHz 立体声压缩为 16 kHz 单声道，并归一化到 `[-1,1]` 浮点值。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L468-L482】
-  - L484-L497 对每个时间帧手动计算 DFT：乘 Hann 窗后与预先缓存的 sin/cos 累乘求出功率谱 `fft_power`。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L484-L497】
-  - L499-L506 将功率谱与 Mel 滤波器做点积，避免对数域出现 `log(0)`，最后写入 `out_tensor[mel, frame]`。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L499-L506】
+## 推理算子实现（L618-L767）
+- `conv2d_forward`（L618-L667）实现 3×3 SAME 卷积+BN+可选激活，输出空间尺寸与输入一致。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L618-L667】
+- `maxpool2d`（L669-L704）执行 2×2、步长 2 的最大池化，空间尺寸按宏 `POOL_OUT_DIM` 推导。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L669-L704】
+- `adaptive_avg_pool`（L706-L739）使用纯整数的区间划分公式 `(oy * in_rows)/out_rows` 与 `((oy+1)*in_rows + out_rows - 1)/out_rows` 计算窗口，再求均值，效果与 PyTorch `AdaptiveAvgPool2d(5,5)` 对齐。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L706-L739】
+- `dense_forward`（L741-L767）完成全连接矩阵乘、BN 与激活输出。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L741-L767】
 
-## 推理算子实现（L508-L597）
-- `conv2d_forward`（L508-L544）实现 3×3 SAME 卷积并叠加 BN 偏移，根据 `KwsActivation` 选择 ReLU 或二值 Sign 激活，输出维度与输入空间尺寸一致。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L508-L544】
-- `maxpool2d`（L546-L569）执行 2×2、步长 2 的最大池化，遍历输入窗口取最大值，输出尺寸由宏 `POOL_OUT_DIM` 推导。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L546-L569】
-- `adaptive_avg_pool`（L571-L595）按输出网格平均汇聚，使用 `floorf/ceilf` 计算输入窗口范围并求均值，实现与 PyTorch `AdaptiveAvgPool2d(5,5)` 相同的行为。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L571-L595】
-- `dense_forward`（L597-L613）完成全连接矩阵乘并施加 BN/激活；内部使用 `double` 累加降低量化误差，然后根据激活类型选择 ReLU、Sign 或线性输出。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L597-L613】
-
-## 整体前向流程（L615-L652）
-- `run_network` 串联上述算子：
-  - L617-L632：Conv1 + ReLU + MaxPool，特征图从 1×40×98 提升到 32×20×49。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L615-L632】
-  - L634-L648：二值卷积层 conv2/conv3 与 Sign 激活之间穿插 MaxPool，把通道数扩展到 128 并逐步减小空间尺寸。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L634-L648】
-  - L650-L654：`adaptive_avg_pool` 压缩为 5×5，并 `memcpy` 到展平缓冲。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L650-L655】
-  - L656-L665：`dense_forward` 生成 256 维隐藏向量，施加 Sign 激活后输入最终全连接层，加上偏置得到 logits。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L656-L665】
-- 输出的 `logits` 与 Python 侧模型一致，可直接做 Softmax/Top-1 判断。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L656-L665】
+## 整体前向流程（L769-L855）
+- `run_network` 串联所有算子：
+  - L771-L788 运行 Conv1→ReLU→MaxPool，空间尺寸从 40×98 缩到 20×49，同时将通道扩展至 32。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L771-L788】
+  - L789-L817 通过二值 Conv2/Conv3 与池化，把通道扩展到 128，并逐步把空间尺寸压缩至 5×12。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L789-L817】
+  - L819-L835 使用自适应平均池化得到 5×5 的特征图并展平成 3200 维向量。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L819-L835】
+  - L837-L854 依次执行 `fc1`、`fc_out`，输出 logits 供 Softmax 使用。【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L837-L854】
 
 ---
-通过以上逐段解析，可以把 KWS 推理流程与原先 Python 训练代码建立一一对应关系，方便调试、优化或移植到其他平台。
+通过以上逐段解析，可将嵌入式 KWS 推理流程与 Python 训练端对齐，并明确各个算子如何在 `math.h` 提供的基础函数配合下复现训练时的数值行为，便于在裸机环境中调试与扩展。

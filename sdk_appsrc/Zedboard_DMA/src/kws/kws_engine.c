@@ -14,6 +14,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#ifndef M_PI_2
+#define M_PI_2 1.57079632679489661923
+#endif
+
 #define KWS_WEIGHT_MAGIC   0x4B575331u /* 'KWS1' */
 #define KWS_WEIGHT_VERSION 0x00010000u
 
@@ -523,7 +527,11 @@ static void init_feature_tables(void)
     for (u32 m = 0U; m < KWS_NUM_MELS + 2U; ++m) {
         mel_points[m] = mel_min + mel_step * (float)m;
         float hz = 700.0f * (powf(10.0f, mel_points[m] / 2595.0f) - 1.0f);
-        bin_points[m] = (u32)floorf(((float)(KWS_FFT_SIZE + 1U)) * hz / (float)KWS_TARGET_SAMPLE_RATE);
+        float bin = ((float)(KWS_FFT_SIZE + 1U)) * hz / (float)KWS_TARGET_SAMPLE_RATE;
+        if (bin < 0.0f) {
+            bin = 0.0f;
+        }
+        bin_points[m] = (u32)bin;
         if (bin_points[m] > KWS_FFT_BINS - 1U) {
             bin_points[m] = KWS_FFT_BINS - 1U;
         }
@@ -705,14 +713,14 @@ static void adaptive_avg_pool(const float *input,
 {
     for (u32 c = 0U; c < channels; ++c) {
         for (u32 oy = 0U; oy < out_rows; ++oy) {
-            u32 y_start = (u32)floorf(((float)oy * (float)in_rows) / (float)out_rows);
-            u32 y_end = (u32)ceilf(((float)(oy + 1U) * (float)in_rows) / (float)out_rows);
+            u32 y_start = (oy * in_rows) / out_rows;
+            u32 y_end = ((oy + 1U) * in_rows + out_rows - 1U) / out_rows;
             if (y_end > in_rows) {
                 y_end = in_rows;
             }
             for (u32 ox = 0U; ox < out_cols; ++ox) {
-                u32 x_start = (u32)floorf(((float)ox * (float)in_cols) / (float)out_cols);
-                u32 x_end = (u32)ceilf(((float)(ox + 1U) * (float)in_cols) / (float)out_cols);
+                u32 x_start = (ox * in_cols) / out_cols;
+                u32 x_end = ((ox + 1U) * in_cols + out_cols - 1U) / out_cols;
                 if (x_end > in_cols) {
                     x_end = in_cols;
                 }
