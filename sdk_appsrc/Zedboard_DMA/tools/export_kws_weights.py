@@ -133,9 +133,9 @@ def write_bin(path: str, num_classes: int, sections: Dict[str, torch.Tensor]) ->
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Export BNN_KWS weights to text + bin formats")
-    parser.add_argument("checkpoint", help="Path to PyTorch checkpoint (.pt)")
-    parser.add_argument("--txt-out", default="kws_weights.txt", help="Text output file")
-    parser.add_argument("--bin-out", default="kws_weights.bin", help="Binary output file")
+    parser.add_argument("--checkpoint", default="D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/weights/bnn_KWS.pt")
+    parser.add_argument("--txt-out", default="D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/weights/kws_weights.txt", help="Text output file")
+    parser.add_argument("--bin-out", default="D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/weights/kws_weights.bin", help="Binary output file")
     parser.add_argument("--bin-first", action="store_true", help="Checkpoint uses binary first conv")
     parser.add_argument("--bin-last", action="store_true", help="Checkpoint uses binary classifier")
     args = parser.parse_args()
