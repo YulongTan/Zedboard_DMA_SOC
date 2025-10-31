@@ -1,40 +1,44 @@
-# KWS 权重转换工具
+本目录包含两个 Python 脚本，用于把 PyTorch 训练得到的 KWS 模型权重导出为固件可直接读取的二进制文件。新的 `kws_engine.c` 采用 v3 格式
+：文件头除了魔数与版本号外，还携带四个卷积层的输出通道数，随后是各层连续的浮点权重数组。所有数值均使用 Zynq A9 默认的小端序存
+储（低地址保存最低有效字节）。
 
-本目录提供两个 Python 脚本，帮助你把 PyTorch 训练得到的 `BNN_KWS` 模型权重依次导出为可读的文本文件，再转换成适用于 Zynq PS 端推理的 `kws_weights.bin`。
-
-## 1. 从 `.pt` 到 `.txt`/`.bin`
+## 1. 从 `.pt` 直接生成文本与二进制
 
 ```bash
 python3 export_kws_weights.py \
     path/to/kws_checkpoint.pt \
     --txt-out kws_weights.txt \
-    --bin-out kws_weights.bin \
-    [--bin-first] [--bin-last]
+    --bin-out bnn_weights_binary_new.bin
 ```
 
-脚本会：
+脚本会完成以下步骤：
 
-1. 读取 PyTorch `state_dict`（支持 `checkpoint["model"]` 格式）；
-2. 按 `kws_engine.c` 期望的顺序提取各卷积/全连接权重及折叠后的 BatchNorm 斜率与偏置；
-3. 将所有浮点值写入 `kws_weights.txt`，便于人工检查或在导出到 `.bin` 前做微调；
-4. 同步生成小端序的 `kws_weights.bin`，文件头包含魔数 `0x4B575331`、版本 `0x00010000` 和类别数。
+1. 读取 PyTorch `state_dict`（支持 `checkpoint["model"]` 格式），自动定位 `conv1`~`conv4` 与最终全连接层的权重张量；
+2. 推断每个卷积层的输出通道数，写入 `layout conv1 conv2 conv3 conv4` 行，同时统计分类数；
+3. 按固件期望的顺序把所有浮点权重展开到 `kws_weights.txt`，方便人工核对；
+4. 生成符合 v3 规范的 `bnn_weights_binary_new.bin`：文件头写入魔数 `0x4B575331`、版本 `0x00030000`、类别数与保留字段，再紧跟四个
+   通道数和连续的权重数据块。
 
-> **提示**：如果训练时启用了 `--bin-first`，记得在导出时带上同名开关，以便脚本读取正确的权重张量。固件侧的全连接输出保持浮点实现，因此暂不支持 `--bin-last` 导出的完全二值分类头。
+若模型的层命名不同，可在脚本中调整 `_infer_conv_weight` 的候选键列表以适配自定义结构。
 
-## 2. 从 `.txt` 再生成 `.bin`
+## 2. 基于文本重新封装二进制
 
-若你只想基于文本结果进行修改，然后重新生成二进制文件，可单独运行：
+如果你想先在文本文件中修改部分权重，再打包成固件格式，可运行：
 
 ```bash
-python3 txt_to_bin.py kws_weights.txt --bin-out kws_weights.bin
+python3 txt_to_bin.py kws_weights.txt --bin-out bnn_weights_binary_new.bin
 ```
 
-脚本会解析 `magic/version/num_classes/reserved` 头部以及每个 `section <name> <count>` 段落，并用 **小端浮点** (`<f`) 写入 `kws_weights.bin`，完全符合 Zynq A9 的内存布局要求——低地址保存最低有效字节。
+文本文件需包含以下段落：
 
-## 文本格式说明
+- `magic`、`version`、`num_classes`、`reserved` 四个头字段；
+- 一行 `layout c1 c2 c3 c4` 指明各卷积层输出通道数；
+- 依次出现的 `section conv1_weights <count>` … `section fc_weights <count>` 块，每个块后跟 `<count>` 行 `float32` 数值。
 
-- 以 `#` 开头的行会被忽略，可用于备注；
-- 头部字段依次为 `magic`、`version`、`num_classes`、`reserved`；
-- 每个段落以 `section 名称 元素个数` 开始，随后的 `元素个数` 行给出对应的 `float32` 数值。
+`txt_to_bin.py` 会严格校验头部与布局信息，再以 `<f`（小端 float）编码写入权重，确保生成的 `bnn_weights_binary_new.bin` 与
+`kws_engine.c` 中的读取逻辑完全对应。
 
-该格式直接对应 `kws_engine.c` 中的读取逻辑【F:sdk_appsrc/Zedboard_DMA/src/kws/kws_engine.c†L333-L413】；默认卷积核、BatchNorm 和全连接层的排布与固件保持一致，确保生成的 `kws_weights.bin` 可以被 PS 端应用直接加载。
+---
+
+无论选择哪种路径，请将最终的 `bnn_weights_binary_new.bin` 拷贝到 SD 卡的 `0:/` 根目录（或在固件中调整 `KWS_DEFAULT_WEIGHT_PATH`），
+这样 KWS 引擎即可在初始化阶段一次性加载全部权重。若二进制文件或布局不匹配，固件会在串口打印错误信息，便于定位问题。 

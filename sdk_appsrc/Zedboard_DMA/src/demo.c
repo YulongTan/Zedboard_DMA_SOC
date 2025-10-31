@@ -48,20 +48,7 @@
 #include "xiic.h"
 #include "xaxidma.h"
 #include <stdint.h>
-#include "ff.h"
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
-#include "sleep.h"
-#include "xparameters.h"	/* SDK generated parameters */
-#include "xplatform_info.h"
-#include "xil_printf.h"
-#include "xil_cache.h"
-#include "xsdps.h"			/* SD device driver */
-#include "xtime_l.h"
-#include "ff.h"
-#include <stdlib.h>   // Ìá¹© rand(), srand(), RAND_MAX
-#include <time.h>     // ÈôÐèÒª srand(time(NULL))
+
 
 
 #ifdef XPAR_INTC_0_DEVICE_ID
@@ -81,7 +68,7 @@
 
 // Audio constants
 // Number of seconds to record/playback
-// ´æ´¢1s,²¥·Å1s
+// Â´Ã¦Â´Â¢1s,Â²Â¥Â·Ã…1s
 #define NR_SEC_TO_REC_PLAY		1
 
 // ADC/DAC sampling rate in Hz
@@ -257,6 +244,13 @@ int main(void)
 //		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
 //	}
 
+	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
+	if(Status == XST_SUCCESS) {
+		Demo.fKwsEngineReady = 1;
+	} else {
+		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
+	}
+
 
 
     xil_printf("\r\nInitialization done");
@@ -293,14 +287,10 @@ int main(void)
                                 {
                                         u32 classIndex = 0U;
                                         float confidence = 0.0f;
-//                                        Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
-//                                                                            NR_AUDIO_SAMPLES,
-//                                                                            &classIndex,
-//                                                                            &confidence);
-                                    	Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
-                                    					 NR_AUDIO_SAMPLES,
-                                    					 &classIndex,
-                                    					 &confidence);
+                                        Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
+                                                                            NR_AUDIO_SAMPLES,
+                                                                            &classIndex,
+                                                                            &confidence);
                                         if (Status == XST_SUCCESS)
                                         {
                                                 int scaled = (int)(confidence * 10000.0f + 0.5f);

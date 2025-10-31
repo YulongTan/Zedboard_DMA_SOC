@@ -1,39 +1,22 @@
-#!/usr/bin/env python3
-"""Convert a plain-text KWS weight dump into the little-endian binary blob.
-
-The text layout matches the output of ``export_kws_weights.py`` and is easy to
-inspect or tweak before producing ``kws_weights.bin`` for the SD card.
-"""
-
 import argparse
 import struct
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 MAGIC = 0x4B575331
-VERSION = 0x00010000
-
-EXPECTED_ORDER = [
+VERSION_V3 = 0x00030000
+SECTION_ORDER = [
     "conv1_weights",
-    "conv1_bias",
-    "conv1_bn_scale",
-    "conv1_bn_bias",
     "conv2_weights",
-    "conv2_bn_scale",
-    "conv2_bn_bias",
     "conv3_weights",
-    "conv3_bn_scale",
-    "conv3_bn_bias",
-    "fc1_weights",
-    "fc1_bn_scale",
-    "fc1_bn_bias",
-    "fc_out_weights",
-    "fc_out_bias",
+    "conv4_weights",
+    "fc_weights",
 ]
 
 
-def parse_text(path: str):
+def parse_txt(path: str) -> Tuple[int, Tuple[int, int, int, int], Dict[str, List[float]]]:
     header: Dict[str, int] = {}
-    sections: Dict[str, List[float]] = {}
+    layout = (0, 0, 0, 0)
+    sections: Dict[str, List[float]] = {name: [] for name in SECTION_ORDER}
     current_section = None
     remaining = 0
 
@@ -44,54 +27,51 @@ def parse_text(path: str):
                 continue
             tokens = line.split()
             if tokens[0] in {"magic", "version", "num_classes", "reserved"}:
-                header[tokens[0]] = int(tokens[1], 0)
+                header[tokens[0]] = int(tokens[1])
+            elif tokens[0] == "layout":
+                layout = tuple(int(tok) for tok in tokens[1:5])  # type: ignore[assignment]
             elif tokens[0] == "section":
-                current_section = tokens[1]
+                name = tokens[1]
+                if name not in sections:
+                    raise ValueError(f"Unexpected section name {name}")
+                current_section = name
                 remaining = int(tokens[2])
-                sections[current_section] = []
+                sections[name] = []
             else:
                 if current_section is None:
-                    raise ValueError("Value outside of a section")
+                    raise ValueError(f"Value without section header: {line}")
                 if remaining <= 0:
-                    raise ValueError(f"Too many values in section {current_section}")
+                    raise ValueError(f"Too many values for section {current_section}")
                 sections[current_section].append(float(tokens[0]))
                 remaining -= 1
 
-    if remaining != 0:
-        raise ValueError(f"Section {current_section} has {remaining} values missing")
+    if current_section is not None and remaining != 0:
+        raise ValueError(f"Section {current_section} truncated: {remaining} values missing")
 
-    for key in ["magic", "version", "num_classes", "reserved"]:
-        if key not in header:
-            raise ValueError(f"Missing header field {key}")
-    if header["magic"] != MAGIC:
-        raise ValueError(f"Unexpected magic 0x{header['magic']:08x}")
-    if header["version"] != VERSION:
-        raise ValueError(f"Unsupported version 0x{header['version']:08x}")
+    if header.get("magic") != MAGIC or header.get("version") != VERSION_V3:
+        raise ValueError("Input file header does not match KWS v3 format")
 
-    for name in EXPECTED_ORDER:
-        if name not in sections:
-            raise ValueError(f"Missing section {name}")
-
-    return header, sections
+    return header["num_classes"], layout, sections
 
 
-def write_bin(path: str, header: Dict[str, int], sections: Dict[str, List[float]]) -> None:
+def write_bin(path: str, num_classes: int, layout: Tuple[int, int, int, int], sections: Dict[str, List[float]]) -> None:
     with open(path, "wb") as f:
-        f.write(struct.pack("<IIII", header["magic"], header["version"], header["num_classes"], header["reserved"]))
-        for name in EXPECTED_ORDER:
-            data = sections[name]
-            f.write(struct.pack(f"<{len(data)}f", *data))
+        f.write(struct.pack("<IIII", MAGIC, VERSION_V3, num_classes, 0))
+        f.write(struct.pack("<IIII", *layout))
+        for name in SECTION_ORDER:
+            values = sections[name]
+            f.write(struct.pack("<{}f".format(len(values)), *values))
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Convert text KWS weights to binary")
-    parser.add_argument("text_file", help="Input text weight file")
-    parser.add_argument("--bin-out", default="kws_weights.bin", help="Binary output path")
+    parser = argparse.ArgumentParser(description="Convert human-readable KWS weights to firmware binary format")
+    parser.add_argument("txt", help="Text weights produced by export_kws_weights.py")
+    parser.add_argument("--bin-out", default="bnn_weights_binary_new.bin", help="Binary output path")
     args = parser.parse_args()
 
-    header, sections = parse_text(args.text_file)
-    write_bin(args.bin_out, header, sections)
-    print(f"Wrote {args.bin_out} with num_classes={header['num_classes']}")
+    num_classes, layout, sections = parse_txt(args.txt)
+    write_bin(args.bin_out, num_classes, layout, sections)
+    print(f"Wrote {args.bin_out} (num_classes={num_classes}, layout={layout})")
 
 
 if __name__ == "__main__":

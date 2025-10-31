@@ -10,8 +10,8 @@
 extern "C" {
 #endif
 
-/* FatFs 灏嗙涓�寮� SD 鍗℃寕杞戒负鐩樼 "0:"锛屽嵆浣挎潈閲嶆斁鍦ㄦ牴鐩綍涔熼渶淇濈暀
- * 璇ュ墠缂�锛屼緥濡� "0:/kws_weights.bin"銆傚闇�鏇存敼鐩綍鍙慨鏀规瀹忋��
+/* FatFs 默认把第一块 SD 卡挂载为 "0:"，因此若权重位于根目录需保留该前缀。
+ * 如需调整目录结构，可修改此处的默认路径。
  */
 #define KWS_SD_MOUNT_POINT      "0:/"
 #define KWS_DEFAULT_WEIGHT_PATH "0:/bnn_weights_binary_new.bin"
@@ -22,9 +22,6 @@ extern "C" {
 #define KWS_INPUT_ROWS           40U
 #define KWS_INPUT_COLS           98U
 #define KWS_INPUT_DEPTH          1U
-/* Legacy layer sizes kept for backward compatibility with v1 weight blobs.
- * The runtime now reads the actual channel counts from the exported weights.
- */
 #define KWS_CONV1_OUT_CH         32U
 #define KWS_CONV2_OUT_CH         64U
 #define KWS_CONV3_OUT_CH         64U
