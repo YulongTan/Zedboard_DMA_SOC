@@ -49,3 +49,14 @@
 19:22:17 INFO  : Registering command handlers for Vitis TCF services
 19:22:17 INFO  : Platform repository initialization has completed.
 19:22:17 INFO  : Successfully done query RDI_DATADIR 
+21:45:55 DEBUG : Logs will be stored at 'D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/IDE.log'.
+21:45:56 INFO  : Launching XSCT server: xsct.bat -n  -interactive D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\temp_xsdb_launch_script.tcl
+21:45:59 INFO  : XSCT server has started successfully.
+21:45:59 INFO  : Successfully done setting XSCT server connection channel  
+21:46:00 INFO  : plnx-install-location is set to ''
+21:46:00 INFO  : Successfully done setting workspace for the tool. 
+21:46:00 INFO  : Successfully done query RDI_DATADIR 
+21:46:01 INFO  : Platform repository initialization has completed.
+21:46:01 INFO  : Registering command handlers for Vitis TCF services
+21:46:18 INFO  : Result from executing command 'getProjects': Zedboard-DMA
+21:46:18 INFO  : Result from executing command 'getPlatforms': Zedboard-DMA|D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/Zedboard-DMA.xpfm;xilinx_zcu102_base_202210_1|D:/Vitis/Vitis/2022.1/base_platforms/xilinx_zcu102_base_202210_1/xilinx_zcu102_base_202210_1.xpfm;xilinx_zcu102_base_dfx_202210_1|D:/Vitis/Vitis/2022.1/base_platforms/xilinx_zcu102_base_dfx_202210_1/xilinx_zcu102_base_dfx_202210_1.xpfm;xilinx_zcu104_base_202210_1|D:/Vitis/Vitis/2022.1/base_platforms/xilinx_zcu104_base_202210_1/xilinx_zcu104_base_202210_1.xpfm

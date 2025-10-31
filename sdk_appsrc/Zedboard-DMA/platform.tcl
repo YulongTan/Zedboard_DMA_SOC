@@ -42,3 +42,7 @@ bsp reload
 domain active {standalone_domain}
 bsp write
 platform generate -domains 
+platform active {Zedboard-DMA}
+platform generate
+platform active {Zedboard-DMA}
+platform generate -domains 
