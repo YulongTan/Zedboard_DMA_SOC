@@ -1,23 +1,27 @@
-21:18:22 **** Incremental Build of configuration Debug for project Zedboard_DMA ****
+21:27:57 **** Incremental Build of configuration Debug for project Zedboard_DMA ****
 make all 
 D:/Vitis/Vitis/2022.1/gnuwin/bin/make --no-print-directory pre-build
 a9-linaro-pre-build-step
 ' '
 D:/Vitis/Vitis/2022.1/gnuwin/bin/make --no-print-directory main-build
-'Building file: ../src/demo.c'
-'Invoking: ARM v7 gcc compiler'
-arm-none-eabi-gcc -Wall -O0 -g3 -c -fmessage-length=0 -MT"src/demo.o" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -ID:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/sw/Zedboard-DMA/standalone_domain/bspinclude/include -MMD -MP -MF"src/demo.d" -MT"src/demo.o" -o "src/demo.o" "../src/demo.c"
-'Finished building: ../src/demo.c'
-' '
 'Building target: Zedboard_DMA.elf'
 'Invoking: ARM v7 gcc linker'
-arm-none-eabi-gcc -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec -Wl,-T -Wl,../src/lscript.ld -LD:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/sw/Zedboard-DMA/standalone_domain/bsplib/lib -o "Zedboard_DMA.elf"  ./src/userio/userio.o  ./src/intc/intc.o  ./src/iic/iic.o  ./src/dma/dma.o  ./src/audio/audio.o  ./src/demo.o ./src/platform.o   -Wl,--start-group,-lxil,-lgcc,-lc,--end-group
-d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: ./src/dma/dma.o:D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/dma/../demo.h:116: multiple definition of `Demo'; ./src/userio/userio.o:D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/userio/../demo.h:116: first defined here
-d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: ./src/audio/audio.o:D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/audio/../demo.h:116: multiple definition of `Demo'; ./src/userio/userio.o:D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/userio/../demo.h:116: first defined here
-d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: ./src/demo.o:D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/demo.h:116: multiple definition of `Demo'; ./src/userio/userio.o:D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/userio/../demo.h:116: first defined here
+arm-none-eabi-gcc -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec -Wl,-T -Wl,../src/lscript.ld -LD:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/sw/Zedboard-DMA/standalone_domain/bsplib/lib -o "Zedboard_DMA.elf"  ./src/userio/userio.o  ./src/kws/kws_engine.o  ./src/intc/intc.o  ./src/iic/iic.o  ./src/dma/dma.o  ./src/audio/audio.o  ./src/demo.o ./src/platform.o   -Wl,--start-group,-lxil,-lgcc,-lc,-lm,--end-group
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: ./src/kws/kws_engine.o: in function `mount_sd_if_needed':
+D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:293: undefined reference to `f_mount'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: ./src/kws/kws_engine.o: in function `read_exact':
+D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:306: undefined reference to `f_read'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: ./src/kws/kws_engine.o: in function `load_weights':
+D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:319: undefined reference to `f_open'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:330: undefined reference to `f_close'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:336: undefined reference to `f_close'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:342: undefined reference to `f_close'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:347: undefined reference to `f_close'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:361: undefined reference to `f_close'
+d:/vitis/vitis/2022.1/gnu/aarch32/nt/gcc-arm-none-eabi/x86_64-oesdk-mingw32/usr/bin/arm-xilinx-eabi/../../libexec/arm-xilinx-eabi/gcc/arm-xilinx-eabi/11.2.0/real-ld.exe: ./src/kws/kws_engine.o:D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA\Debug/../src/kws/kws_engine.c:375: more undefined references to `f_close' follow
 collect2.exe: error: ld returned 1 exit status
-make[1]: *** [makefile:48: Zedboard_DMA.elf] Error 1
-make: *** [makefile:39: all] Error 2
+make[1]: *** [makefile:49: Zedboard_DMA.elf] Error 1
+make: *** [makefile:40: all] Error 2
 
-21:18:23 Build Finished (took 1s.463ms)
+21:27:58 Build Finished (took 1s.97ms)
 
