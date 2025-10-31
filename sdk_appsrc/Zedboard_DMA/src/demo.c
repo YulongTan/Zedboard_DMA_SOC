@@ -35,6 +35,7 @@
 #include "./intc/intc.h"
 #include "./userio/userio.h"
 #include "./iic/iic.h"
+#include "./kws/kws_engine.h"
 
 /***************************** Include Files *********************************/
 
@@ -44,6 +45,7 @@
 #include "xdebug.h"
 #include "xiic.h"
 #include "xaxidma.h"
+#include <stdint.h>
 
 
 
@@ -72,6 +74,7 @@
 
 // Number of samples to record/playback
 #define NR_AUDIO_SAMPLES		(NR_SEC_TO_REC_PLAY*AUDIO_SAMPLING_RATE)
+#define KWS_DMA_TRANSFER_BYTES		(5U * NR_AUDIO_SAMPLES)
 
 /* Timeout loop counter for reset
  */
@@ -101,6 +104,8 @@ static XIic sIic;
 static XAxiDma sAxiDma;		/* Instance of the XAxiDma */
 
 static XGpio sUserIO;
+
+volatile sDemo_t Demo = {0};
 
 #ifdef XPAR_INTC_0_DEVICE_ID
  static XIntc sIntc;
@@ -164,6 +169,10 @@ int main(void)
 	int Status;
 
 	Demo.u8Verbose = 1;
+	Demo.fKwsEngineReady = 0;
+	Demo.fKwsResultValid = 0;
+	Demo.u32KwsClass = 0;
+	Demo.fKwsConfidence = 0.0f;
 
 	//Xil_DCacheDisable();
 
@@ -215,6 +224,13 @@ int main(void)
 	// Make sure all driver instances using interrupts are initialized first
 	fnEnableInterrupts(&sIntc, &ivt[0], sizeof(ivt)/sizeof(ivt[0]));
 
+	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
+	if(Status == XST_SUCCESS) {
+		Demo.fKwsEngineReady = 1;
+	} else {
+		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
+	}
+
 
 
     xil_printf("\r\nInitialization done");
@@ -245,12 +261,34 @@ int main(void)
     				Xil_Out32(I2S_STREAM_CONTROL_REG, 0x00000000);
     				Xil_Out32(I2S_TRANSFER_CONTROL_REG, 0x00000000);
     				//Flush cache
-    				//Flush cache
+    				Xil_DCacheInvalidateRange((u32) MEM_BASE_ADDR, KWS_DMA_TRANSFER_BYTES);
 
+                                if (Demo.fKwsEngineReady && KwsEngine_IsReady())
+                                {
+                                        u32 classIndex = 0U;
+                                        float confidence = 0.0f;
+                                        Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
+                                                                            NR_AUDIO_SAMPLES,
+                                                                            &classIndex,
+                                                                            &confidence);
+                                        if (Status == XST_SUCCESS)
+                                        {
+                                                int scaled = (int)(confidence * 10000.0f + 0.5f);
+                                                Demo.u32KwsClass = classIndex;
+                                                Demo.fKwsConfidence = confidence;
+                                                Demo.fKwsResultValid = 1;
+                                                xil_printf("\r\nKWS inference: class %lu (confidence %d.%02d%%)",
+                                                        (unsigned long)classIndex,
+                                                        scaled / 100,
+                                                        scaled % 100);
+                                        }
+                                        else
+                                        {
+                                                xil_printf("\r\nKWS inference failed");
+                                                Demo.fKwsResultValid = 0;
+                                        }
+                                }
 
-//					//microblaze_flush_dcache();
-					//Xil_DCacheInvalidateRange((u32) MEM_BASE_ADDR, 5*NR_AUDIO_SAMPLES);
-    				//microblaze_invalidate_dcache();
     				// Reset S2MM event and record flag
     				Demo.fDmaS2MMEvent = 0;
     				Demo.fAudioRecord = 0;
