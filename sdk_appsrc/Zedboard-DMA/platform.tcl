@@ -29,3 +29,16 @@ bsp reload
 domain active {standalone_domain}
 bsp write
 platform generate -domains standalone_domain 
+platform generate
+platform clean
+platform generate
+platform active {Zedboard-DMA}
+bsp reload
+bsp write
+platform generate -domains 
+domain active {zynq_fsbl}
+bsp reload
+bsp reload
+domain active {standalone_domain}
+bsp write
+platform generate -domains 

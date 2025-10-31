@@ -48,7 +48,20 @@
 #include "xiic.h"
 #include "xaxidma.h"
 #include <stdint.h>
-
+#include "ff.h"
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+#include "sleep.h"
+#include "xparameters.h"	/* SDK generated parameters */
+#include "xplatform_info.h"
+#include "xil_printf.h"
+#include "xil_cache.h"
+#include "xsdps.h"			/* SD device driver */
+#include "xtime_l.h"
+#include "ff.h"
+#include <stdlib.h>   // 提供 rand(), srand(), RAND_MAX
+#include <time.h>     // 若需要 srand(time(NULL))
 
 
 #ifdef XPAR_INTC_0_DEVICE_ID
@@ -68,7 +81,8 @@
 
 // Audio constants
 // Number of seconds to record/playback
-#define NR_SEC_TO_REC_PLAY		5
+// 存储1s,播放1s
+#define NR_SEC_TO_REC_PLAY		1
 
 // ADC/DAC sampling rate in Hz
 //#define AUDIO_SAMPLING_RATE		1000
@@ -86,7 +100,9 @@
 
 
 /**************************** Type Definitions *******************************/
-
+#define AUDIO_FRAME_STRIDE	  KWS_SOURCE_CHANNELS
+#define AUDIO_SAMPLE_BYTES	  4U
+#define AUDIO_BUFFER_BYTES	  ((size_t)NR_SEC_TO_REC_PLAY * AUDIO_SAMPLING_RATE * AUDIO_FRAME_STRIDE * AUDIO_SAMPLE_BYTES)
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
@@ -225,13 +241,21 @@ int main(void)
 	// Enable all interrupts in our interrupt vector table
 	// Make sure all driver instances using interrupts are initialized first
 	fnEnableInterrupts(&sIntc, &ivt[0], sizeof(ivt)/sizeof(ivt[0]));
-
+	// initial KwsEngine
 	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
+
 	if(Status == XST_SUCCESS) {
-		Demo.fKwsEngineReady = 1;
+		xil_printf("\r\nKWS engine initialization successful;\r\n");
 	} else {
 		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
+		return Status;
 	}
+//	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
+//	if(Status == XST_SUCCESS) {
+//		Demo.fKwsEngineReady = 1;
+//	} else {
+//		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
+//	}
 
 
 
@@ -269,10 +293,14 @@ int main(void)
                                 {
                                         u32 classIndex = 0U;
                                         float confidence = 0.0f;
-                                        Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
-                                                                            NR_AUDIO_SAMPLES,
-                                                                            &classIndex,
-                                                                            &confidence);
+//                                        Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
+//                                                                            NR_AUDIO_SAMPLES,
+//                                                                            &classIndex,
+//                                                                            &confidence);
+                                    	Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
+                                    					 NR_AUDIO_SAMPLES,
+                                    					 &classIndex,
+                                    					 &confidence);
                                         if (Status == XST_SUCCESS)
                                         {
                                                 int scaled = (int)(confidence * 10000.0f + 0.5f);

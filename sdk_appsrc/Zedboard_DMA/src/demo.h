@@ -56,6 +56,7 @@
 #endif
 #endif
 
+// “Ù∆µµƒ¥Ê¥¢µÿ÷∑
 #ifndef DDR_BASE_ADDR
 #warning CHECK FOR THE VALID DDR ADDRESS IN XPARAMETERS.H, DEFAULT SET TO 0x010000000
 #define MEM_BASE_ADDR		0x010000000

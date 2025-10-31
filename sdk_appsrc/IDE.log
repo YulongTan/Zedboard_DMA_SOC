@@ -31,3 +31,21 @@
 20:59:05 INFO  : Platform repository initialization has completed.
 20:59:05 INFO  : Successfully done query RDI_DATADIR 
 20:59:06 INFO  : Registering command handlers for Vitis TCF services
+08:38:46 DEBUG : Logs will be stored at 'D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/IDE.log'.
+08:38:48 INFO  : Launching XSCT server: xsct.bat -n  -interactive D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\temp_xsdb_launch_script.tcl
+08:38:55 INFO  : XSCT server has started successfully.
+08:38:55 INFO  : Platform repository initialization has completed.
+08:38:55 INFO  : plnx-install-location is set to ''
+08:38:55 INFO  : Successfully done setting XSCT server connection channel  
+08:38:55 INFO  : Successfully done query RDI_DATADIR 
+08:38:55 INFO  : Successfully done setting workspace for the tool. 
+08:38:55 INFO  : Registering command handlers for Vitis TCF services
+19:22:05 DEBUG : Logs will be stored at 'D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/IDE.log'.
+19:22:07 INFO  : Launching XSCT server: xsct.bat -n  -interactive D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\temp_xsdb_launch_script.tcl
+19:22:13 INFO  : XSCT server has started successfully.
+19:22:13 INFO  : Successfully done setting XSCT server connection channel  
+19:22:13 INFO  : plnx-install-location is set to ''
+19:22:13 INFO  : Successfully done setting workspace for the tool. 
+19:22:17 INFO  : Registering command handlers for Vitis TCF services
+19:22:17 INFO  : Platform repository initialization has completed.
+19:22:17 INFO  : Successfully done query RDI_DATADIR 
