@@ -122,3 +122,19 @@ timestamp=[2025-11-01 13:37:03], mode=BUILD, duration=0:00:00.899, duration_ms=8
 timestamp=[2025-11-01 13:37:11], mode=BUILD, duration=0:00:07.781, duration_ms=7781, data={name=Zedboard_DMA_system, configuration=Debug, clean_build=false}
 timestamp=[2025-11-01 13:41:04], mode=BUILD, duration=0:00:01.538, duration_ms=1538, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
 timestamp=[2025-11-01 13:41:12], mode=BUILD, duration=0:00:07.809, duration_ms=7809, data={name=Zedboard_DMA_system, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 14:51:41], mode=WORKBENCH_START, duration=0:00:14.295, duration_ms=14295, data={}
+timestamp=[2025-11-01 14:51:42], mode=WORKBENCH_UI_INIT, duration=0:00:00.960, duration_ms=960, data={editors_count=15, platform_editors_count=2, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=RemoteSystemsTempFiles,Zedboard-DMA,Zedboard_DMA,Zedboard_DMA_system}
+timestamp=[2025-11-01 14:51:42], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.277, duration_ms=277, data={}
+timestamp=[2025-11-01 14:53:57], mode=BUILD, duration=0:00:01.080, duration_ms=1080, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 14:54:33], mode=BUILD, duration=0:00:01.480, duration_ms=1480, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 14:54:41], mode=BUILD, duration=0:00:07.718, duration_ms=7718, data={name=Zedboard_DMA_system, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 14:54:48], mode=BUILD, duration=0:00:00.800, duration_ms=800, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 14:54:56], mode=BUILD, duration=0:00:07.557, duration_ms=7557, data={name=Zedboard_DMA_system, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 14:55:16], mode=BUILD, duration=0:00:00.813, duration_ms=813, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 14:55:24], mode=BUILD, duration=0:00:07.817, duration_ms=7817, data={name=Zedboard_DMA_system, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 15:52:40], mode=BUILD, duration=0:00:01.066, duration_ms=1066, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 15:54:14], mode=BUILD, duration=0:00:01.594, duration_ms=1594, data={name=Zedboard_DMA, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 15:54:22], mode=BUILD, duration=0:00:08.353, duration_ms=8353, data={name=Zedboard_DMA_system, configuration=Debug, clean_build=false}
+timestamp=[2025-11-01 21:11:53], mode=WORKBENCH_START, duration=0:00:11.390, duration_ms=11390, data={}
+timestamp=[2025-11-01 21:11:54], mode=WORKBENCH_UI_INIT, duration=0:00:01.264, duration_ms=1264, data={editors_count=15, platform_editors_count=2, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=RemoteSystemsTempFiles,Zedboard-DMA,Zedboard_DMA,Zedboard_DMA_system}
+timestamp=[2025-11-01 21:11:54], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.451, duration_ms=451, data={}

@@ -60,7 +60,7 @@
 
 #include "audio.h"
 #include "../demo.h"
-#define AUDIO_SAMPLING_RATE	  96000
+
 /************************** Variable Definitions *****************************/
 
 extern volatile sDemo_t Demo;
@@ -676,15 +676,9 @@ void fnAudioPlay(XAxiDma AxiDma, u32 u32NrSamples)
 	Xil_Out32(I2S_TRANSFER_CONTROL_REG, uTransferVariable.l);
 	uTransferVariable.bit.u32bit0 = 1;
 	Xil_Out32(I2S_TRANSFER_CONTROL_REG, uTransferVariable.l);
-////	// 丢弃前面100ms
-//	int offset = (int)(AUDIO_SAMPLING_RATE * 0.1f);  // 丢掉前100ms
-//	const int32_t *audio_data = ((int32_t *)MEM_BASE_ADDR) + offset;
-    /* 丢掉前 100 ms 音频数据 */
-    int offset_frames = (int)(AUDIO_SAMPLING_RATE * 0.1f);   // 100 ms
-    size_t offset_bytes = 5U * offset_frames;                // 每帧 5 bytes
-    size_t remaining_bytes = 5U * (u32NrSamples - offset_frames);
-    const u8 *audio_data = (const u8 *)MEM_BASE_ADDR + offset_bytes;
-
+//	// 丢弃前面100ms
+	int offset = (int)(AUDIO_SAMPLING_RATE * 0.1f);  // 丢掉前100ms
+	const int32_t *audio_data = ((int32_t *)MEM_BASE_ADDR) + offset;
 	uTransferVariable.l = XAxiDma_SimpleTransfer(&AxiDma,(u32) audio_data, 5*u32NrSamples, XAXIDMA_DMA_TO_DEVICE);
 
 //	uTransferVariable.l = XAxiDma_SimpleTransfer(&AxiDma,(u32) MEM_BASE_ADDR, 5*u32NrSamples, XAXIDMA_DMA_TO_DEVICE);

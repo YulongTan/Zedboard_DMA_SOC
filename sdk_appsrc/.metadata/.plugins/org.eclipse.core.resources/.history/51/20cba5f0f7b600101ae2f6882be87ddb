@@ -60,7 +60,7 @@
 
 #include "audio.h"
 #include "../demo.h"
-#define AUDIO_SAMPLING_RATE	  96000
+
 /************************** Variable Definitions *****************************/
 
 extern volatile sDemo_t Demo;

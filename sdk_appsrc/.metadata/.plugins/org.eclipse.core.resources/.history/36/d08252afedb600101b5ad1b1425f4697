@@ -68,44 +68,12 @@
 
 // Audio constants
 // Number of seconds to record/playback
-// store 1s, playback 1s
+// ¬¥√¶¬¥¬¢1s,¬≤¬•¬∑√Ö1s
 //#define NR_SEC_TO_REC_PLAY		1
-#define I2S_BYTES_PER_FRAME	5U
-static int32_t sign_extend_20bit(uint32_t value)
-{
-    if (value & 0x80000U) {
-        value |= 0xFFF00000U;
-    }
-    return (int32_t)value;
-}
-
-static void unpack_i2s_frames_to_q31(const uint8_t *src,
-                                    size_t frames,
-                                    int32_t *dst)
-{
-    for (size_t i = 0U; i < frames; ++i) {
-        size_t byte_idx = i * I2S_BYTES_PER_FRAME;
-        uint32_t b0 = src[byte_idx + 0U];
-        uint32_t b1 = src[byte_idx + 1U];
-        uint32_t b2 = src[byte_idx + 2U];
-        uint32_t b3 = src[byte_idx + 3U];
-        uint32_t b4 = src[byte_idx + 4U];
-
-        uint32_t left_u = (b0 << 12) | (b1 << 4) | (b2 >> 4);
-        uint32_t right_u = ((b2 & 0x0FU) << 16) | (b3 << 8) | b4;
-
-        int32_t left = sign_extend_20bit(left_u) << 12;
-        int32_t right = sign_extend_20bit(right_u) << 12;
-
-        int64_t mono = ((int64_t)left + (int64_t)right) / 2;
-        dst[i] = (int32_t)mono;
-    }
-}
-
-// Ê∑áÓÜΩÊïºË§∞Êõ¢ÁÖ∂ÈóÄÂûÆÂÆ≥ÈîõÂ±æÂùäÈçîÁä±Á´¥Ê∂ìÓÅÜ«îÁÄπÊ∞≠Ê§ÇÈóÇÔøΩ0.1s
-#define BIAS_SEC 0.1f  // ÈçãÂøïÁñÜÁªãÂÜ≤ÁïæÈèÉÂ†ïÊö± 0.1 ÁªâÔøΩ
+// –ﬁ∏ƒ¬º“Ù≥§∂»£¨ÃÌº”“ª∏ˆŒ»∂® ±º‰0.1s
+#define BIAS_SEC 0.1f  // ∆´÷√Œ»∂® ±≥§ 0.1 √Î
 #define NR_SEC_TO_REC_PLAY		(1.0f + BIAS_SEC)
-// Èé∏Â§êÊï≠ÈèÉÂ†ïÊ£ø
+// ∞¥º¸ ±º‰
 #define KWS_VALID_SEC  1U
 // ADC/DAC sampling rate in Hz
 //#define AUDIO_SAMPLING_RATE		1000
@@ -113,26 +81,25 @@ static void unpack_i2s_frames_to_q31(const uint8_t *src,
 
 // Number of samples to record/playback
 #define NR_AUDIO_SAMPLES		((int)(NR_SEC_TO_REC_PLAY*AUDIO_SAMPLING_RATE))
-// KWSÈê®ÂãØÂô∞ÈèçÁÉΩÓï∂ÈêúÂõ®Êß∏16000
+// KWSµƒ≤…—˘∆µ¬  «16000
 #define NR_KWS_SAMPLES          ((int)(KWS_VALID_SEC*KWS_SOURCE_SAMPLE_RATE))
-// Ê∂îÊ®π‰∫í5ÈèÑÓàöÊ¥úÊ∂ìÔøΩ32Êµ£Â∂ÑÁ∂ÖÁÄπÊàíÁÆªÊµ†„É®ÔøΩËô´Ê∫ÄÈçôÂ≤ÑÔøΩÊ∞∂‰∫æ
+// ≥À“‘5 «“ÚŒ™32ŒªŒªøÌ≥À“‘∂˙ª˙À´Õ®µ¿
+//#define KWS_DMA_TRANSFER_BYTES		(5U * NR_AUDIO_SAMPLES)
 #define KWS_DMA_TRANSFER_BYTES		(5U * NR_AUDIO_SAMPLES)
-
 /* Timeout loop counter for reset
  */
 #define RESET_TIMEOUT_COUNTER	10000
 
 #define TEST_START_VALUE	0x0
-// ÈóáÔøΩÁëï‰Ω∏ÓáÆÈóäÊäΩÓï∂Êù©Ê∂úÓîëÈóÑÂ∂âÂô∞ÈèçÔøΩ
-static int32_t gMicMonoBuffer[NR_AUDIO_SAMPLES];
-static int32_t gKwsInputBuffer[NR_KWS_SAMPLES];
+// –Ë“™∂‘“Ù∆µΩ¯––Ωµ≤…—˘
+
 
 /**************************** Type Definitions *******************************/
 #define AUDIO_FRAME_STRIDE	  KWS_SOURCE_CHANNELS // 1U
 #define AUDIO_SAMPLE_BYTES	  4U
 //#define AUDIO_BUFFER_BYTES	  ((size_t)NR_SEC_TO_REC_PLAY * AUDIO_SAMPLING_RATE * AUDIO_FRAME_STRIDE * AUDIO_SAMPLE_BYTES)
 // KWS transfer
-/* Áª†ÔøΩÈçóÊõûÈí©ÈçßÔøΩ 6 ÈêêÂΩíÊ™∑Èñ≤Âõ®Áâ±ÈîõÂ±ΩÂΩ≤Èç¶ÔøΩ PS ÁªîÓàöÁñÑÈèÉÊÉ∞ÁπçÁêõÔøΩ */
+/* ºÚµ•∆Ωæ˘ 6 µ„Ωµ≤…—˘£¨ø…‘⁄ PS ∂À µ ±‘À–– */
 #define DOWNSAMPLE_RATIO 6
 static void downsample_6x_avg(const int32_t *in, int32_t *out, int input_samples) {
     int output_samples = input_samples / DOWNSAMPLE_RATIO;
@@ -143,6 +110,24 @@ static void downsample_6x_avg(const int32_t *in, int32_t *out, int input_samples
         out[i] = (int32_t)(sum / DOWNSAMPLE_RATIO);
     }
 }
+
+static void unpack_i2s_5byte_to_q31(
+        const uint8_t *src, int32_t *dst, int frames)
+{
+    for (int i = 0; i < frames; i++) {
+        int base = i * 5;
+
+        // »°«∞3◊÷Ω⁄Œ™◊Û…˘µ¿£®ºŸ…Ë“™ MIC  ‰»Î£©
+        int32_t l = (src[base] << 16) | (src[base + 1] << 8) | (src[base + 2]);
+
+        // ≤π∑˚∫≈Œª
+        if (l & 0x800000) l |= 0xFF000000;
+
+        // ¿©’πŒ™ Q31£®◊Û“∆8Œª£©
+        dst[i] = l << 8;
+    }
+}
+
 /***************** Macros (Inline Functions) Definitions *********************/
 
 
@@ -283,29 +268,28 @@ int main(void)
 	// initial KwsEngine
 	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
 
-	if(Status == XST_SUCCESS) {
-		Demo.fKwsEngineReady = 1;
-		xil_printf("\r\nKWS engine initialization successful;\r\n");
-	} else {
-		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
-		return Status;
-	}
-
+//	if(Status == XST_SUCCESS) {
+//		xil_printf("\r\nKWS engine initialization successful;\r\n");
+//	} else {
+//		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
+//		return Status;
+//	}
 //	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
-
 //	if(Status == XST_SUCCESS) {
 //		Demo.fKwsEngineReady = 1;
 //	} else {
 //		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
 //	}
 
-//	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
-/*	if(Status == XST_SUCCESS) {
+	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
+	if(Status == XST_SUCCESS) {
 		Demo.fKwsEngineReady = 1;
 	} else {
 		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
-	}*/
+	}
 
+	// ÃÌº”Kws ‰»Îbuffer
+	static int32_t gKwsInputBuffer[NR_KWS_SAMPLES];
     xil_printf("\r\nInitialization done");
     xil_printf("\r\n");
     xil_printf("\r\nControls:");
@@ -326,82 +310,76 @@ int main(void)
     	//Xil_DCacheDisable();
 
     	// Checking the DMA S2MM event flag
-			if (Demo.fDmaS2MMEvent)
-			{
-				xil_printf("\r\nRecording Done...");
+    			if (Demo.fDmaS2MMEvent)
+    			{
+    				xil_printf("\r\nRecording Done...");
 
-				// Disable Stream function to send data (S2MM)
-				Xil_Out32(I2S_STREAM_CONTROL_REG, 0x00000000);
-				Xil_Out32(I2S_TRANSFER_CONTROL_REG, 0x00000000);
-				//Flush cache
-				Xil_DCacheInvalidateRange((u32) MEM_BASE_ADDR, KWS_DMA_TRANSFER_BYTES);
+    				// Disable Stream function to send data (S2MM)
+    				Xil_Out32(I2S_STREAM_CONTROL_REG, 0x00000000);
+    				Xil_Out32(I2S_TRANSFER_CONTROL_REG, 0x00000000);
+    				//Flush cache
+    				Xil_DCacheInvalidateRange((u32) MEM_BASE_ADDR, KWS_DMA_TRANSFER_BYTES);
 
-				const int engine_ready = (Demo.fKwsEngineReady != 0U) && (KwsEngine_IsReady() != 0);
-				xil_printf("\r\n Demo_KWS_Ready = %d \r\n", engine_ready);
-				xil_printf("\r\n Demo.fKwsEngineReady = %d \r\n", Demo.fKwsEngineReady);
-				xil_printf("\r\n KwsEngine_IsReady = %d \r\n", KwsEngine_IsReady());
-				if (engine_ready)
-				{
-					Demo.fKwsResultValid = 0;
-					const size_t total_frames = KWS_DMA_TRANSFER_BYTES / I2S_BYTES_PER_FRAME;
-					const size_t offset_frames = (size_t)(AUDIO_SAMPLING_RATE * BIAS_SEC);
-					const size_t available_frames = (total_frames > offset_frames) ? (total_frames - offset_frames) : 0U;
-					const size_t required_frames = (size_t)NR_KWS_SAMPLES * DOWNSAMPLE_RATIO;
-
-					if (available_frames >= required_frames)
+    				xil_printf("\r\n Demo_KWS_Ready = %d \r\n", Demo.fKwsEngineReady && KwsEngine_IsReady());
+    				xil_printf("\r\n Demo.fKwsEngineReady = %d \r\n", Demo.fKwsEngineReady);
+    				xil_printf("\r\n KwsEngine_IsReady = %d \r\n", KwsEngine_IsReady());
+					if (Demo.fKwsEngineReady && KwsEngine_IsReady())
 					{
-						const uint8_t *dma_bytes = (const uint8_t *)(uintptr_t)MEM_BASE_ADDR;
-						unpack_i2s_frames_to_q31(dma_bytes, total_frames, gMicMonoBuffer);
+							u32 classIndex = 0U;
+							float confidence = 0.0f;
+////							int offset = (int)(AUDIO_SAMPLING_RATE * 0.1f);  // ∂™µÙ«∞100ms
+////							const int32_t *audio_data = ((int32_t *)MEM_BASE_ADDR) + offset;
+//							Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
+//																NR_AUDIO_SAMPLES,
+//																&classIndex,
+//																&confidence);
+////							Status = KwsEngine_ProcessRecording((const int32_t *)audio_data,
+////																AUDIO_SAMPLING_RATE,
+////																&classIndex,
+////																&confidence);
+							// ÃÌº”∆´÷√
+//			                /* º∆À„∆´“∆≤¢Ωµ≤…—˘ */
+			                const int offset = (int)(AUDIO_SAMPLING_RATE * BIAS_SEC);
+//			                const int32_t *raw_audio = ((const int32_t *)MEM_BASE_ADDR) + offset;
+//			                xil_printf("\r\n NR_KWS_SAMPLES = %d \r\n", NR_KWS_SAMPLES);
+							const uint8_t *dma_bytes = (const uint8_t *)MEM_BASE_ADDR;
+							int32_t pcm_96k[AUDIO_SAMPLING_RATE];
+							unpack_i2s_5byte_to_q31(dma_bytes + offset * 5, pcm_96k, AUDIO_SAMPLING_RATE);
+//			                int32_t kws_input[NR_KWS_SAMPLES];
+			                downsample_6x_avg(raw_audio, gKwsInputBuffer, AUDIO_SAMPLING_RATE); // 96k°˙16k
+			                xil_printf("\r\n    sampling done");
+			                Status = KwsEngine_ProcessRecording(gKwsInputBuffer,
+			                									NR_KWS_SAMPLES,
+			                                                    &classIndex,
+			                                                    &confidence);
 
-						const int downsample_input = (int)required_frames;
-						downsample_6x_avg(gMicMonoBuffer + offset_frames, gKwsInputBuffer, downsample_input);
-						xil_printf("\r\n    sampling done");
-
-						u32 classIndex = 0U;
-						float confidence = 0.0f;
-
-						Status = KwsEngine_ProcessRecording(gKwsInputBuffer,
-							NR_KWS_SAMPLES,
-							&classIndex,
-							&confidence);
-
-						if (Status == XST_SUCCESS)
-						{
-							int scaled = (int)(confidence * 10000.0f + 0.5f);
-							Demo.u32KwsClass = classIndex;
-							Demo.fKwsConfidence = confidence;
-							Demo.fKwsResultValid = 1;
-							xil_printf("\r\nKWS inference: class %lu (confidence %d.%02d%%)",
-								(unsigned long)classIndex,
-								scaled / 100,
-								scaled % 100);
-						}
-						else
-						{
-							xil_printf("\r\nKWS inference failed");
-							Demo.fKwsResultValid = 0;
-						}
+							if (Status == XST_SUCCESS)
+							{
+									int scaled = (int)(confidence * 10000.0f + 0.5f);
+									Demo.u32KwsClass = classIndex;
+									Demo.fKwsConfidence = confidence;
+									Demo.fKwsResultValid = 1;
+									xil_printf("\r\nKWS inference: class %lu (confidence %d.%02d%%)",
+											(unsigned long)classIndex,
+											scaled / 100,
+											scaled % 100);
+							}
+							else
+							{
+									xil_printf("\r\nKWS inference failed");
+									Demo.fKwsResultValid = 0;
+							}
 					}
-					else
-					{
-						xil_printf("\r\nInsufficient microphone audio: have %lu frames, need %lu\r\n",
-							(unsigned long)available_frames,
-							(unsigned long)required_frames);
-						Demo.fKwsResultValid = 0;
+					else {
+						xil_printf("\r\nKWS inference failed");
 					}
-				}
-				else
-				{
-					xil_printf("\r\nKWS engine not ready; skipping inference\r\n");
-					Demo.fKwsResultValid = 0;
-				}
 
-				// Reset S2MM event and record flag
-				Demo.fDmaS2MMEvent = 0;
-				Demo.fAudioRecord = 0;
-		}
+    				// Reset S2MM event and record flag
+    				Demo.fDmaS2MMEvent = 0;
+    				Demo.fAudioRecord = 0;
+    			}
 
-		// Checking the DMA MM2S event flag
+    			// Checking the DMA MM2S event flag
     			if (Demo.fDmaMM2SEvent)
     			{
     				xil_printf("\r\nPlayback Done...");
@@ -438,7 +416,7 @@ int main(void)
     						{
     							xil_printf("\r\nStart Recording...\r\n");
     							fnSetMicInput();
-    							usleep(100000); // ÂØ§ÊÉ∞Áπú100msÈîõÂ≤ÉÓÜÄÂ¶Ø‚ÑÉÂ´ôÈçìÂ∂áÓÅ¨ÁªãÂÜ≤Áïæ
+    							usleep(100000); // —”≥Ÿ100ms£¨»√ƒ£ƒ‚«∞∂ÀŒ»∂®
     							fnAudioRecord(sAxiDma,NR_AUDIO_SAMPLES);
 //    							fnAudioRecord(sAxiDma,AUDIO_SAMPLING_RATE);
     							Demo.fAudioRecord = 1;
@@ -460,7 +438,7 @@ int main(void)
     						{
     							xil_printf("\r\nStart Playback...\r\n");
     							fnSetHpOutput();
-    							usleep(100000); // ÂØ§ÊÉ∞Áπú100msÈîõÂ≤ÉÓÜÄÂ¶Ø‚ÑÉÂ´ôÈçìÂ∂áÓÅ¨ÁªãÂÜ≤Áïæ
+    							usleep(100000); // —”≥Ÿ100ms£¨»√ƒ£ƒ‚«∞∂ÀŒ»∂®
     							//
     							fnAudioPlay(sAxiDma,AUDIO_SAMPLING_RATE);
 //    							fnAudioPlay(sAxiDma,NR_AUDIO_SAMPLES);

@@ -101,7 +101,8 @@ static void unpack_i2s_frames_to_q31(const uint8_t *src,
         dst[i] = (int32_t)mono;
     }
 }
-
+static int32_t gMicMonoBuffer[NR_AUDIO_SAMPLES];
+static int32_t gKwsInputBuffer[NR_KWS_SAMPLES];
 // 淇敼褰曢煶闀垮害锛屾坊鍔犱竴涓ǔ瀹氭椂闂�0.1s
 #define BIAS_SEC 0.1f  // 鍋忕疆绋冲畾鏃堕暱 0.1 绉�
 #define NR_SEC_TO_REC_PLAY		(1.0f + BIAS_SEC)
@@ -124,8 +125,7 @@ static void unpack_i2s_frames_to_q31(const uint8_t *src,
 
 #define TEST_START_VALUE	0x0
 // 闇�瑕佸闊抽杩涜闄嶉噰鏍�
-static int32_t gMicMonoBuffer[NR_AUDIO_SAMPLES];
-static int32_t gKwsInputBuffer[NR_KWS_SAMPLES];
+
 
 /**************************** Type Definitions *******************************/
 #define AUDIO_FRAME_STRIDE	  KWS_SOURCE_CHANNELS // 1U
@@ -283,21 +283,19 @@ int main(void)
 	// initial KwsEngine
 	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
 
-	if(Status == XST_SUCCESS) {
-		Demo.fKwsEngineReady = 1;
-		xil_printf("\r\nKWS engine initialization successful;\r\n");
-	} else {
-		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
-		return Status;
-	}
-
-//	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
-
 //	if(Status == XST_SUCCESS) {
 //		Demo.fKwsEngineReady = 1;
+//		xil_printf("\r\nKWS engine initialization successful;\r\n");
 //	} else {
 //		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
+//		return Status;
 //	}
+	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
+	if(Status == XST_SUCCESS) {
+		Demo.fKwsEngineReady = 1;
+	} else {
+		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
+	}
 
 //	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
 /*	if(Status == XST_SUCCESS) {

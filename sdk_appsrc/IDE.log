@@ -1572,3 +1572,101 @@ con
 ----------------End of Script----------------
 
 12:02:30 INFO  : Launch script is exported to file 'D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA_system\_ide\scripts\systemdebugger_zedboard_dma_system_standalone.tcl'
+14:51:34 DEBUG : Logs will be stored at 'D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/IDE.log'.
+14:51:35 INFO  : Launching XSCT server: xsct.bat -n  -interactive D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\temp_xsdb_launch_script.tcl
+14:51:39 INFO  : XSCT server has started successfully.
+14:51:39 INFO  : Successfully done setting XSCT server connection channel  
+14:51:39 INFO  : plnx-install-location is set to ''
+14:51:39 INFO  : Successfully done setting workspace for the tool. 
+14:51:42 INFO  : Platform repository initialization has completed.
+14:51:42 INFO  : Registering command handlers for Vitis TCF services
+14:51:42 INFO  : Successfully done query RDI_DATADIR 
+14:53:54 INFO  : Checking for BSP changes to sync application flags for project 'Zedboard_DMA'...
+14:54:31 INFO  : Checking for BSP changes to sync application flags for project 'Zedboard_DMA'...
+14:54:36 ERROR : (XSDB Server)ERROR: [Hsi 55-1571] The design file D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/hw/design_1_wrapper.xsa is already opened
+
+14:54:48 INFO  : Checking for BSP changes to sync application flags for project 'Zedboard_DMA'...
+14:54:51 ERROR : (XSDB Server)ERROR: [Hsi 55-1571] The design file D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/hw/design_1_wrapper.xsa is already opened
+
+14:55:15 INFO  : Checking for BSP changes to sync application flags for project 'Zedboard_DMA'...
+14:55:18 ERROR : (XSDB Server)ERROR: [Hsi 55-1571] The design file D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/hw/design_1_wrapper.xsa is already opened
+
+14:55:56 ERROR : (XRT Server)D:/Vitis/Vitis/2022.1/bin/unwrapped/win64.o/xrt_server.exe: error: illegal option '-'
+Usage: agent [OPTION]...
+Start Target Communication Framework agent.
+  -d               run in daemon mode (output is sent to system logger)
+  -i               run in interactive mode
+  -L<file>         enable logging, use -L- to send log to stderr
+  -l<level>        set log level, the level is comma separated list of:
+      alloc        memory allocation and deallocation (0x1)
+      eventcore    main event queue (0x2)
+      waitpid      waitpid() events (0x4)
+      events       low-level debugger events (0x8)
+      protocol     communication protocol (0x20)
+      context      debug context actions (0x40)
+      children     debug context children (0x10)
+      discovery    discovery (0x80)
+      asyncreq     async I/O (0x100)
+      proxy        proxy state (0x200)
+      tcflog       proxy traffic (0x400)
+      elf          ELF reader (0x800)
+      stack        stack trace service (0x2000)
+      plugin       plugins (0x4000)
+      shutdown     shutdown of subsystems (0x8000)
+      disasm       disassembly service (0x10000)
+  -s<url>          set agent listening port and protocol, default is tcp::0
+  -S               print server properties in Json format to stdout
+  -g<port>         start GDB Remote Serial Protocol server at the specified TCP port
+  -I<idle-seconds> exit if there are no connections for the specified time
+
+14:56:56 ERROR : Timed out. 60 seconds have elapsed while waiting for the XRT server to launch.
+14:56:58 INFO  : Connected to target on host '127.0.0.1' and port '3121'.
+14:56:59 INFO  : Jtag cable 'Digilent Zed 210248B77C6C' is selected.
+14:56:59 INFO  : 'jtag frequency' command is executed.
+14:56:59 INFO  : Context for 'APU' is selected.
+14:56:59 INFO  : System reset is completed.
+14:57:02 INFO  : 'after 3000' command is executed.
+14:57:02 INFO  : 'targets -set -filter {jtag_cable_name =~ "Digilent Zed 210248B77C6C" && level==0 && jtag_device_ctx=="jsn-Zed-210248B77C6C-23727093-0"}' command is executed.
+14:57:04 INFO  : Device configured successfully with "D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA/_ide/bitstream/design_1_wrapper.bit"
+14:57:04 INFO  : Context for 'APU' is selected.
+14:57:05 INFO  : Hardware design and registers information is loaded from 'D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/hw/design_1_wrapper.xsa'.
+14:57:05 INFO  : 'configparams force-mem-access 1' command is executed.
+14:57:05 INFO  : Context for 'APU' is selected.
+14:57:05 INFO  : Sourcing of 'D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA/_ide/psinit/ps7_init.tcl' is done.
+14:57:05 INFO  : 'ps7_init' command is executed.
+14:57:05 INFO  : 'ps7_post_config' command is executed.
+14:57:05 INFO  : Context for processor 'ps7_cortexa9_0' is selected.
+14:57:05 INFO  : The application 'D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA/Debug/Zedboard_DMA.elf' is downloaded to processor 'ps7_cortexa9_0'.
+14:57:05 INFO  : 'configparams force-mem-access 0' command is executed.
+14:57:05 INFO  : ----------------XSDB Script----------------
+connect -url tcp:127.0.0.1:3121
+targets -set -nocase -filter {name =~"APU*"}
+rst -system
+after 3000
+targets -set -filter {jtag_cable_name =~ "Digilent Zed 210248B77C6C" && level==0 && jtag_device_ctx=="jsn-Zed-210248B77C6C-23727093-0"}
+fpga -file D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA/_ide/bitstream/design_1_wrapper.bit
+targets -set -nocase -filter {name =~"APU*"}
+loadhw -hw D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/hw/design_1_wrapper.xsa -mem-ranges [list {0x40000000 0xbfffffff}] -regs
+configparams force-mem-access 1
+targets -set -nocase -filter {name =~"APU*"}
+source D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA/_ide/psinit/ps7_init.tcl
+ps7_init
+ps7_post_config
+targets -set -nocase -filter {name =~ "*A9*#0"}
+dow D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA/Debug/Zedboard_DMA.elf
+configparams force-mem-access 0
+----------------End of Script----------------
+
+14:57:05 INFO  : Context for processor 'ps7_cortexa9_0' is selected.
+14:57:05 INFO  : 'con' command is executed.
+14:57:05 INFO  : ----------------XSDB Script (After Launch)----------------
+targets -set -nocase -filter {name =~ "*A9*#0"}
+con
+----------------End of Script----------------
+
+14:57:05 INFO  : Launch script is exported to file 'D:\Vitis\USERS\10_Zedboard_audio_in\Zedboard-DMA-2018.2-1\sdk_appsrc\Zedboard_DMA_system\_ide\scripts\systemdebugger_zedboard_dma_system_standalone.tcl'
+15:52:39 INFO  : Checking for BSP changes to sync application flags for project 'Zedboard_DMA'...
+15:54:12 INFO  : Checking for BSP changes to sync application flags for project 'Zedboard_DMA'...
+15:54:17 ERROR : (XSDB Server)ERROR: [Hsi 55-1571] The design file D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/hw/design_1_wrapper.xsa is already opened
+
+16:40:22 INFO  : Disconnected from the channel tcfchan#4.
