@@ -38,6 +38,7 @@ typedef struct {
     u32 num_classes;
     u32 reserved;
 } __attribute__((packed)) KwsWeightHeader;
+// Model 鐢ㄦ潵瀛樺偍鏉冮噸
 
 typedef struct {
     u32 conv1_out_channels;
@@ -59,7 +60,7 @@ typedef struct {
     float *fc_weights;
 } KwsModel;
 
-// KwsScratch 用来存储中间结果
+// KwsScratch 鐢ㄦ潵瀛樺偍涓棿缁撴灉
 typedef struct {
     float *input_tensor;
     float *mono_buffer;
@@ -205,8 +206,8 @@ XStatus KwsEngine_ProcessRecording(const int32_t *source_buffer,
         xil_printf("KWS: feature extraction failed\r\n");
         return XST_FAILURE;
     }
-    // 整个网络
-    // 处理完成的结果被存储在gScratch.input_tensor中，gScratch.logits是网络识别结果
+    // 璺戞暣涓綉缁�
+    // 棰勫鐞嗗畬鐨勭粨鏋滆鏆傚瓨鍦╣Scratch.input_tensor涓紝gScratch.logits鏄綉缁滆瘑鍒粨鏋�
     run_network(gScratch.input_tensor, gScratch.logits);
 
     float max_logit = gScratch.logits[0];
@@ -309,7 +310,7 @@ static XStatus load_weights(const char *path)
     }
 
     KwsWeightHeader header;
-    // 读取并校验文件头
+    // 璇诲彇骞舵牎楠屾枃浠跺ご
     res = read_exact(&fil, &header, sizeof(header));
     if (res != FR_OK) {
         xil_printf("KWS: unable to read weight header (%d)\r\n", (int)res);
@@ -590,7 +591,7 @@ static float activate_scalar(float value, KwsActivation activation)
     case KWS_ACT_RELU:
         return (value > 0.0f) ? value : 0.0f;
     case KWS_ACT_SIGN:
-        return (value >= 0.0f) ? 1.0f : -1.0f;
+        return (value > 0.0f) ? 1.0f : -1.0f;
     case KWS_ACT_NONE:
     default:
         return value;
@@ -711,7 +712,7 @@ static void run_network(const float *input_tensor, float *logits)
     const u32 conv3_cols = conv_out_dim(conv2_cols, 3U, 1U, 0U);
     const u32 conv4_rows = conv_out_dim(conv3_rows, 3U, 2U, 1U);
     const u32 conv4_cols = conv_out_dim(conv3_cols, 3U, 2U, 1U);
-
+    //
     conv2d_forward(input_tensor,
                    KWS_INPUT_DEPTH,
                    KWS_INPUT_ROWS,
@@ -725,10 +726,10 @@ static void run_network(const float *input_tensor, float *logits)
                    conv1_rows,
                    conv1_cols);
 
-    const size_t conv1_size = (size_t)gModel.conv1_out_channels * conv1_rows * conv1_cols;
-    for (size_t i = 0U; i < conv1_size; ++i) {
-        gScratch.conv1_out[i] += 1.0f;
-    }
+//    const size_t conv1_size = (size_t)gModel.conv1_out_channels * conv1_rows * conv1_cols;
+//    for (size_t i = 0U; i < conv1_size; ++i) {
+//        gScratch.conv1_out[i] += 1.0f;
+//    }
 
     conv2d_forward(gScratch.conv1_out,
                    gModel.conv1_out_channels,
@@ -743,6 +744,11 @@ static void run_network(const float *input_tensor, float *logits)
                    conv2_rows,
                    conv2_cols);
 
+	const size_t conv2_size = (size_t)gModel.conv2_out_channels * conv2_rows * conv2_cols;
+	for (size_t i = 0U; i < conv2_size; ++i) {
+		gScratch.conv2_out[i] += 32.0f;
+	}
+
     conv2d_forward(gScratch.conv2_out,
                    gModel.conv2_out_channels,
                    conv2_rows,
@@ -755,6 +761,11 @@ static void run_network(const float *input_tensor, float *logits)
                    gScratch.conv3_out,
                    conv3_rows,
                    conv3_cols);
+
+	const size_t conv3_size = (size_t)gModel.conv3_out_channels * conv3_rows * conv3_cols;
+	for (size_t i = 0U; i < conv3_size; ++i) {
+		gScratch.conv3_out[i] += 64.0f;
+	}
 
     conv2d_forward(gScratch.conv3_out,
                    gModel.conv3_out_channels,

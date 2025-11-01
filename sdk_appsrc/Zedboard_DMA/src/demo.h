@@ -90,6 +90,34 @@
  #define INTC_HANDLER	XScuGic_InterruptHandler
 #endif
 
+// define
+//// 录音时长
+//#define NR_SEC_TO_REC_PLAY		1u
+////// 修改录音长度，添加一个稳定时间0.1s
+////#define BIAS_SEC 0.1f  // 偏置稳定时长 0.1 秒
+////#define NR_SEC_TO_REC_PLAY		(1.0f + BIAS_SEC)
+//
+//// ADC/DAC sampling rate in Hz
+////#define AUDIO_SAMPLING_RATE		1000
+//#define AUDIO_SAMPLING_RATE	  96000
+//
+//// Number of samples to record/playback
+//#define NR_AUDIO_SAMPLES		((int)(NR_SEC_TO_REC_PLAY*AUDIO_SAMPLING_RATE))
+//// 乘以5是因为32位位宽乘以耳机双通道
+//#define KWS_DMA_TRANSFER_BYTES		(5U * NR_AUDIO_SAMPLES)
+//
+///* Timeout loop counter for reset
+// */
+//#define RESET_TIMEOUT_COUNTER	10000
+//
+//#define TEST_START_VALUE	0x0
+
+
+/**************************** Type Definitions *******************************/
+#define AUDIO_FRAME_STRIDE	  KWS_SOURCE_CHANNELS
+#define AUDIO_SAMPLE_BYTES	  4U
+#define AUDIO_BUFFER_BYTES	  ((size_t)NR_SEC_TO_REC_PLAY * AUDIO_SAMPLING_RATE * AUDIO_FRAME_STRIDE * AUDIO_SAMPLE_BYTES)
+
 
 /**************************** Type Definitions *******************************/
 typedef struct {

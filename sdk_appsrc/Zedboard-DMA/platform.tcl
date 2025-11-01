@@ -46,3 +46,6 @@ platform active {Zedboard-DMA}
 platform generate
 platform active {Zedboard-DMA}
 platform generate -domains 
+bsp reload
+bsp reload
+platform generate

@@ -69,14 +69,21 @@
 // Audio constants
 // Number of seconds to record/playback
 // 麓忙麓垄1s,虏楼路脜1s
-#define NR_SEC_TO_REC_PLAY		1
-
+//#define NR_SEC_TO_REC_PLAY		1
+// 修改录音长度，添加一个稳定时间0.1s
+#define BIAS_SEC 0.1f  // 偏置稳定时长 0.1 秒
+#define NR_SEC_TO_REC_PLAY		(1.0f + BIAS_SEC)
+// 按键时间
+#define KWS_VALID_SEC  1U
 // ADC/DAC sampling rate in Hz
 //#define AUDIO_SAMPLING_RATE		1000
 #define AUDIO_SAMPLING_RATE	  96000
 
 // Number of samples to record/playback
-#define NR_AUDIO_SAMPLES		(NR_SEC_TO_REC_PLAY*AUDIO_SAMPLING_RATE)
+#define NR_AUDIO_SAMPLES		((int)(NR_SEC_TO_REC_PLAY*AUDIO_SAMPLING_RATE))
+// KWS的采样频率是16000
+#define NR_KWS_SAMPLES          ((int)(KWS_VALID_SEC*KWS_SOURCE_SAMPLE_RATE))
+// 乘以5是因为32位位宽乘以耳机双通道
 #define KWS_DMA_TRANSFER_BYTES		(5U * NR_AUDIO_SAMPLES)
 
 /* Timeout loop counter for reset
@@ -84,13 +91,25 @@
 #define RESET_TIMEOUT_COUNTER	10000
 
 #define TEST_START_VALUE	0x0
+// 需要对音频进行降采样
 
 
 /**************************** Type Definitions *******************************/
 #define AUDIO_FRAME_STRIDE	  KWS_SOURCE_CHANNELS
 #define AUDIO_SAMPLE_BYTES	  4U
 #define AUDIO_BUFFER_BYTES	  ((size_t)NR_SEC_TO_REC_PLAY * AUDIO_SAMPLING_RATE * AUDIO_FRAME_STRIDE * AUDIO_SAMPLE_BYTES)
-
+// KWS transfer
+/* 简单平均 6 点降采样，可在 PS 端实时运行 */
+#define DOWNSAMPLE_RATIO 6
+static void downsample_6x_avg(const int32_t *in, int32_t *out, int input_samples) {
+    int output_samples = input_samples / DOWNSAMPLE_RATIO;
+    for (int i = 0; i < output_samples; ++i) {
+        int64_t sum = 0;
+        for (int j = 0; j < DOWNSAMPLE_RATIO; ++j)
+            sum += in[i * DOWNSAMPLE_RATIO + j];
+        out[i] = (int32_t)(sum / DOWNSAMPLE_RATIO);
+    }
+}
 /***************** Macros (Inline Functions) Definitions *********************/
 
 
@@ -244,12 +263,12 @@ int main(void)
 //		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
 //	}
 
-	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
-	if(Status == XST_SUCCESS) {
+//	Status = KwsEngine_Initialize(KWS_DEFAULT_WEIGHT_PATH);
+/*	if(Status == XST_SUCCESS) {
 		Demo.fKwsEngineReady = 1;
 	} else {
 		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
-	}
+	}*/
 
 
 
@@ -283,31 +302,49 @@ int main(void)
     				//Flush cache
     				Xil_DCacheInvalidateRange((u32) MEM_BASE_ADDR, KWS_DMA_TRANSFER_BYTES);
 
-                                if (Demo.fKwsEngineReady && KwsEngine_IsReady())
-                                {
-                                        u32 classIndex = 0U;
-                                        float confidence = 0.0f;
-                                        Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
-                                                                            NR_AUDIO_SAMPLES,
-                                                                            &classIndex,
-                                                                            &confidence);
-                                        if (Status == XST_SUCCESS)
-                                        {
-                                                int scaled = (int)(confidence * 10000.0f + 0.5f);
-                                                Demo.u32KwsClass = classIndex;
-                                                Demo.fKwsConfidence = confidence;
-                                                Demo.fKwsResultValid = 1;
-                                                xil_printf("\r\nKWS inference: class %lu (confidence %d.%02d%%)",
-                                                        (unsigned long)classIndex,
-                                                        scaled / 100,
-                                                        scaled % 100);
-                                        }
-                                        else
-                                        {
-                                                xil_printf("\r\nKWS inference failed");
-                                                Demo.fKwsResultValid = 0;
-                                        }
-                                }
+					if (Demo.fKwsEngineReady && KwsEngine_IsReady())
+					{
+							u32 classIndex = 0U;
+							float confidence = 0.0f;
+////							int offset = (int)(AUDIO_SAMPLING_RATE * 0.1f);  // 丢掉前100ms
+////							const int32_t *audio_data = ((int32_t *)MEM_BASE_ADDR) + offset;
+//							Status = KwsEngine_ProcessRecording((const int32_t *)MEM_BASE_ADDR,
+//																NR_AUDIO_SAMPLES,
+//																&classIndex,
+//																&confidence);
+////							Status = KwsEngine_ProcessRecording((const int32_t *)audio_data,
+////																AUDIO_SAMPLING_RATE,
+////																&classIndex,
+////																&confidence);
+							// 添加偏置
+			                /* 计算偏移并降采样 */
+			                int offset = (int)(AUDIO_SAMPLING_RATE * BIAS_SEC);
+			                const int32_t *raw_audio = ((int32_t *)MEM_BASE_ADDR) + offset;
+
+			                int32_t kws_input[NR_KWS_SAMPLES];
+			                downsample_6x_avg(raw_audio, kws_input, AUDIO_SAMPLING_RATE); // 96k→16k
+
+			                Status = KwsEngine_ProcessRecording(kws_input,
+			                									NR_KWS_SAMPLES,
+			                                                    &classIndex,
+			                                                    &confidence);
+							if (Status == XST_SUCCESS)
+							{
+									int scaled = (int)(confidence * 10000.0f + 0.5f);
+									Demo.u32KwsClass = classIndex;
+									Demo.fKwsConfidence = confidence;
+									Demo.fKwsResultValid = 1;
+									xil_printf("\r\nKWS inference: class %lu (confidence %d.%02d%%)",
+											(unsigned long)classIndex,
+											scaled / 100,
+											scaled % 100);
+							}
+							else
+							{
+									xil_printf("\r\nKWS inference failed");
+									Demo.fKwsResultValid = 0;
+							}
+					}
 
     				// Reset S2MM event and record flag
     				Demo.fDmaS2MMEvent = 0;
@@ -351,8 +388,9 @@ int main(void)
     						{
     							xil_printf("\r\nStart Recording...\r\n");
     							fnSetMicInput();
-
+    							usleep(100000); // 延迟100ms，让模拟前端稳定
     							fnAudioRecord(sAxiDma,NR_AUDIO_SAMPLES);
+//    							fnAudioRecord(sAxiDma,AUDIO_SAMPLING_RATE);
     							Demo.fAudioRecord = 1;
     						}
     						else
@@ -372,7 +410,10 @@ int main(void)
     						{
     							xil_printf("\r\nStart Playback...\r\n");
     							fnSetHpOutput();
-    							fnAudioPlay(sAxiDma,NR_AUDIO_SAMPLES);
+    							usleep(100000); // 延迟100ms，让模拟前端稳定
+    							//
+    							fnAudioPlay(sAxiDma,AUDIO_SAMPLING_RATE);
+//    							fnAudioPlay(sAxiDma,NR_AUDIO_SAMPLES);
     							Demo.fAudioPlayback = 1;
     						}
     						else
