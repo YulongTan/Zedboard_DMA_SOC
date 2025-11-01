@@ -1,4 +1,4 @@
-12:00:53 **** Incremental Build of configuration Debug for project Zedboard_DMA_system ****
+13:41:05 **** Incremental Build of configuration Debug for project Zedboard_DMA_system ****
 make all 
 Generating bif file for the system project
 generate_system_bif.bat 1168 D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/Zedboard-DMA.xpfm standalone_domain D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA_system/Debug/system.bif
@@ -6,5 +6,5 @@ sdcard_gen --xpfm D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_
 creating BOOT.BIN using D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA/_ide/bitstream/design_1_wrapper.bit
 Running D:/Vitis/Vitis/2022.1/bin/bootgen  -image D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA_system/Debug/sd_card_temp/boot.bif -w -o i BOOT.BIN
 
-12:01:01 Build Finished (took 8s.47ms)
+13:41:12 Build Finished (took 7s.799ms)
 

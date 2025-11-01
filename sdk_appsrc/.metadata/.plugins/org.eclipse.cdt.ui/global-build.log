@@ -1,6 +1,6 @@
 Nothing to build in platform 'Zedboard-DMA'
 
-12:00:51 **** Incremental Build of configuration Debug for project Zedboard_DMA ****
+13:41:03 **** Incremental Build of configuration Debug for project Zedboard_DMA ****
 make all 
 D:/Vitis/Vitis/2022.1/gnuwin/bin/make --no-print-directory pre-build
 a9-linaro-pre-build-step
@@ -19,10 +19,10 @@ arm-none-eabi-gcc -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=non
 'Invoking: ARM v7 Print Size'
 arm-none-eabi-size Zedboard_DMA.elf  |tee "Zedboard_DMA.elf.size"
    text	   data	    bss	    dec	    hex	filename
- 104761	   3128	34259184	34367073	20c6661	Zedboard_DMA.elf
+ 105097	   3128	34323184	34431409	20d61b1	Zedboard_DMA.elf
 'Finished building: Zedboard_DMA.elf.size'
 ' '
-12:00:53 **** Incremental Build of configuration Debug for project Zedboard_DMA_system ****
+13:41:05 **** Incremental Build of configuration Debug for project Zedboard_DMA_system ****
 make all 
 Generating bif file for the system project
 generate_system_bif.bat 1168 D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard-DMA/export/Zedboard-DMA/Zedboard-DMA.xpfm standalone_domain D:/Vitis/USERS/10_Zedboard_audio_in/Zedboard-DMA-2018.2-1/sdk_appsrc/Zedboard_DMA_system/Debug/system.bif

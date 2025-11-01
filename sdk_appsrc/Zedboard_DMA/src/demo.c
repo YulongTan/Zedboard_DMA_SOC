@@ -95,9 +95,9 @@
 
 
 /**************************** Type Definitions *******************************/
-#define AUDIO_FRAME_STRIDE	  KWS_SOURCE_CHANNELS
+#define AUDIO_FRAME_STRIDE	  KWS_SOURCE_CHANNELS // 1U
 #define AUDIO_SAMPLE_BYTES	  4U
-#define AUDIO_BUFFER_BYTES	  ((size_t)NR_SEC_TO_REC_PLAY * AUDIO_SAMPLING_RATE * AUDIO_FRAME_STRIDE * AUDIO_SAMPLE_BYTES)
+//#define AUDIO_BUFFER_BYTES	  ((size_t)NR_SEC_TO_REC_PLAY * AUDIO_SAMPLING_RATE * AUDIO_FRAME_STRIDE * AUDIO_SAMPLE_BYTES)
 // KWS transfer
 /* 简单平均 6 点降采样，可在 PS 端实时运行 */
 #define DOWNSAMPLE_RATIO 6
@@ -270,8 +270,8 @@ int main(void)
 		xil_printf("\r\nKWS engine initialization failed; inference disabled\r\n");
 	}*/
 
-
-
+	// 添加Kws输入buffer
+	static int32_t gKwsInputBuffer[NR_KWS_SAMPLES];
     xil_printf("\r\nInitialization done");
     xil_printf("\r\n");
     xil_printf("\r\nControls:");
@@ -302,6 +302,9 @@ int main(void)
     				//Flush cache
     				Xil_DCacheInvalidateRange((u32) MEM_BASE_ADDR, KWS_DMA_TRANSFER_BYTES);
 
+    				xil_printf("\r\n Demo_KWS_Ready = %d \r\n", Demo.fKwsEngineReady && KwsEngine_IsReady());
+    				xil_printf("\r\n Demo.fKwsEngineReady = %d \r\n", Demo.fKwsEngineReady);
+    				xil_printf("\r\n KwsEngine_IsReady = %d \r\n", KwsEngine_IsReady);
 					if (Demo.fKwsEngineReady && KwsEngine_IsReady())
 					{
 							u32 classIndex = 0U;
@@ -318,16 +321,17 @@ int main(void)
 ////																&confidence);
 							// 添加偏置
 			                /* 计算偏移并降采样 */
-			                int offset = (int)(AUDIO_SAMPLING_RATE * BIAS_SEC);
-			                const int32_t *raw_audio = ((int32_t *)MEM_BASE_ADDR) + offset;
-
-			                int32_t kws_input[NR_KWS_SAMPLES];
-			                downsample_6x_avg(raw_audio, kws_input, AUDIO_SAMPLING_RATE); // 96k→16k
-
-			                Status = KwsEngine_ProcessRecording(kws_input,
+			                const int offset = (int)(AUDIO_SAMPLING_RATE * BIAS_SEC);
+			                const int32_t *raw_audio = ((const int32_t *)MEM_BASE_ADDR) + offset;
+			                xil_printf("\r\n NR_KWS_SAMPLES = %d \r\n", NR_KWS_SAMPLES);
+//			                int32_t kws_input[NR_KWS_SAMPLES];
+			                downsample_6x_avg(raw_audio, gKwsInputBuffer, AUDIO_SAMPLING_RATE); // 96k→16k
+			                xil_printf("\r\n    sampling done");
+			                Status = KwsEngine_ProcessRecording(gKwsInputBuffer,
 			                									NR_KWS_SAMPLES,
 			                                                    &classIndex,
 			                                                    &confidence);
+
 							if (Status == XST_SUCCESS)
 							{
 									int scaled = (int)(confidence * 10000.0f + 0.5f);
@@ -344,6 +348,9 @@ int main(void)
 									xil_printf("\r\nKWS inference failed");
 									Demo.fKwsResultValid = 0;
 							}
+					}
+					else {
+						xil_printf("\r\nKWS inference failed");
 					}
 
     				// Reset S2MM event and record flag
